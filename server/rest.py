@@ -127,12 +127,6 @@ class Broadcast(Resource):
 
         return Transaction().broadcast(args["raw"])
 
-class Price(Resource):
-    @stats.rest
-    def get(self):
-        data = General().price()
-        return utils.response(data["sugarchain"])
-
 def init(api):
     api.add_resource(GetInfo, "/info")
     api.add_resource(BlockByHeight, "/height/<int:height>")
@@ -149,4 +143,3 @@ def init(api):
     api.add_resource(MempoolInfo, "/mempool")
     api.add_resource(EstimateFee, "/fee")
     api.add_resource(Broadcast, "/broadcast")
-    api.add_resource(Price, "/price")
