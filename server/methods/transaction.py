@@ -74,3 +74,7 @@ class Transaction():
                                 updates[address] = [tx]
 
         return updates
+
+    @classmethod
+    def spent(cls, txid: str):
+        return utils.make_request("getspentinfo", [txid])

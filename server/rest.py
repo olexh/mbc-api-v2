@@ -3,7 +3,6 @@ from flask_restful import Resource, reqparse
 from server.methods.general import General
 from server.methods.address import Address
 from server.methods.block import Block
-from flask import Response
 from server import stats
 from server import utils
 
