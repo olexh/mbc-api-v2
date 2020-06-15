@@ -6,6 +6,9 @@ class General():
         data = utils.make_request("getblockchaininfo")
 
         if data["error"] is None:
+            mempool = cls.mempool()["result"]["size"]
+
+            data["result"]["mempool"] = mempool
             data["result"]["reward"] = utils.reward(data["result"]["blocks"])
             data["result"].pop("verificationprogress")
             data["result"].pop("initialblockdownload")
