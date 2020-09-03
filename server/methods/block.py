@@ -51,7 +51,7 @@ class Block():
 
     @classmethod
     @cache.memoize(timeout=86400)
-    def chart(cls, height: int, offset: int):
+    def chart(cls):
         data = utils.make_request("getblockchaininfo")
         height = data["result"]["blocks"]
         offset = 2880
