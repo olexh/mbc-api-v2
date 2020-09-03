@@ -50,7 +50,7 @@ class Block():
         return result[::-1]
 
     @classmethod
-    @cache.memoize(timeout=86400)
+    # @cache.memoize(timeout=86400)
     def chart(cls):
         def chunks(data, n):
             n = max(1, n)
