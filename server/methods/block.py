@@ -62,7 +62,7 @@ class Block():
         result = {}
 
         for chunk in chunks(range(height - (offset - 1), height + 1), 24):
-            height = chunk[0]
+            height = str(chunk[0])
             result[height] = 0
 
             for block in chunk:
