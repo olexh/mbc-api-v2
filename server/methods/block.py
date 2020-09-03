@@ -69,8 +69,8 @@ class Block():
                 data = utils.make_request("getblockhash", [block])
 
                 if data["error"] is None:
-                    result = utils.make_request("getblock", [data["result"]])["result"]
-                    total += len(result["tx"])
+                    tx_data = utils.make_request("getblock", [data["result"]])["result"]
+                    total += len(tx_data["tx"])
 
             result.append([height, total])
 
