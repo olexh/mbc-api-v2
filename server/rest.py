@@ -147,3 +147,4 @@ def init(api):
     api.add_resource(MempoolInfo, "/mempool")
     api.add_resource(EstimateFee, "/fee")
     api.add_resource(Broadcast, "/broadcast")
+    api.add_resource(BuildChart, "/chart")
