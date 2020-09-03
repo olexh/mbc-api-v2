@@ -74,7 +74,7 @@ class Block():
 
             result.append([height, total])
 
-            return result
+        return result
 
     @classmethod
     @cache.memoize(timeout=config.cache)
