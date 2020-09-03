@@ -39,9 +39,9 @@ class Block():
             data = utils.make_request("getblockhash", [block])
 
             if data["error"] is None:
-                txid = data["result"]
+                block_hash = data["result"]
                 data.pop("result")
-                data["result"] = utils.make_request("getblock", [txid])["result"]
+                data["result"] = utils.make_request("getblock", [block_hash])["result"]
                 data["result"]["txcount"] = len(data["result"]["tx"])
                 data["result"].pop("nTx")
 
@@ -59,18 +59,18 @@ class Block():
         data = utils.make_request("getblockchaininfo")
         height = data["result"]["blocks"]
         offset = 1440
-        result = []
+        result = {}
 
         for chunk in chunks(range(height - (offset - 1), height + 1), 24):
-            total = 0
+            height = chunk[0]
+            result[height] = 0
 
             for block in chunk:
                 data = utils.make_request("getblockhash", [block])
 
                 if data["error"] is None:
-                    total += len(data["result"]["tx"])
-
-            result.append([chunk[0], total])
+                    result = utils.make_request("getblock", [data["result"]])["result"]
+                    result[height] += len(result["tx"])
 
             return result
 
