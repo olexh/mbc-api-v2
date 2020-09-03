@@ -52,24 +52,26 @@ class Block():
     @classmethod
     @cache.memoize(timeout=86400)
     def chart(cls):
+        def chunks(data, n):
+            n = max(1, n)
+            return (data[i:i + n] for i in range(0, len(data), n))
+
         data = utils.make_request("getblockchaininfo")
         height = data["result"]["blocks"]
         offset = 1440
-        result = []
+        result = {}
 
-        for block in range(height - (offset - 1), height + 1):
-            data = utils.make_request("getblockhash", [block])
+        for chunk in chunks(range(height - (offset - 1), height + 1), 24):
+            height = chunk[0]
+            result[height] = 0
 
-            if data["error"] is None:
-                txid = data["result"]
-                data.pop("result")
-                data["result"] = utils.make_request("getblock", [txid])["result"]
-                data["result"]["txcount"] = len(data["result"]["tx"])
-                data["result"].pop("nTx")
+            for block in chunk:
+                data = utils.make_request("getblockhash", [block])
 
-                result.append(data["result"])
+                if data["error"] is None:
+                    result[height] += len(data["result"]["tx"])
 
-        return result[::-1]
+            return result
 
     @classmethod
     @cache.memoize(timeout=config.cache)
