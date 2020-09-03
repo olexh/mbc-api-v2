@@ -11,6 +11,11 @@ class GetInfo(Resource):
     def get(self):
         return General().info()
 
+class BuildChart(Resource):
+    @stats.rest
+    def get(self):
+        return Block().chart()
+
 class BlockByHeight(Resource):
     @stats.rest
     def get(self, height):

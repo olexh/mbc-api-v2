@@ -37,14 +37,34 @@ class Block():
         result = []
         for block in range(height - (offset - 1), height + 1):
             data = utils.make_request("getblockhash", [block])
-            nethash = utils.make_request("getnetworkhashps", [120, block])
 
-            if data["error"] is None and nethash["error"] is None:
+            if data["error"] is None:
                 txid = data["result"]
                 data.pop("result")
                 data["result"] = utils.make_request("getblock", [txid])["result"]
                 data["result"]["txcount"] = len(data["result"]["tx"])
-                data["result"]["nethash"] = int(nethash["result"])
+                data["result"].pop("nTx")
+
+                result.append(data["result"])
+
+        return result[::-1]
+
+    @classmethod
+    @cache.memoize(timeout=86400)
+    def chart(cls, height: int, offset: int):
+        data = utils.make_request("getblockchaininfo")
+        height = data["result"]["blocks"]
+        offset = 2880
+        result = []
+
+        for block in range(height - (offset - 1), height + 1):
+            data = utils.make_request("getblockhash", [block])
+
+            if data["error"] is None:
+                txid = data["result"]
+                data.pop("result")
+                data["result"] = utils.make_request("getblock", [txid])["result"]
+                data["result"]["txcount"] = len(data["result"]["tx"])
                 data["result"].pop("nTx")
 
                 result.append(data["result"])
