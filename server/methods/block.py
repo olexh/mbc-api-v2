@@ -54,7 +54,7 @@ class Block():
     def chart(cls):
         data = utils.make_request("getblockchaininfo")
         height = data["result"]["blocks"]
-        offset = 2880
+        offset = 1440
         result = []
 
         for block in range(height - (offset - 1), height + 1):
