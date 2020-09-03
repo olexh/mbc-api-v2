@@ -59,18 +59,20 @@ class Block():
         data = utils.make_request("getblockchaininfo")
         height = data["result"]["blocks"]
         offset = 1440
-        result = {}
+        result = []
 
         for chunk in chunks(range(height - (offset - 1), height + 1), 24):
-            height = str(chunk[0])
-            result[height] = 0
+            height = chunk[0]
+            total = 0
 
             for block in chunk:
                 data = utils.make_request("getblockhash", [block])
 
                 if data["error"] is None:
                     result = utils.make_request("getblock", [data["result"]])["result"]
-                    result[height] += len(result["tx"])
+                    total += len(result["tx"])
+
+            result.append([height, total])
 
             return result
 
