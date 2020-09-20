@@ -13,7 +13,6 @@ class Block():
             data.pop("result")
             data["result"] = utils.make_request("getblock", [txid])["result"]
             data["result"]["txcount"] = len(data["result"]["tx"])
-            data["result"].pop("nTx")
 
         return data
 
@@ -23,7 +22,6 @@ class Block():
 
         if data["error"] is None:
             data["result"]["txcount"] = len(data["result"]["tx"])
-            data["result"].pop("nTx")
 
         return data
 
@@ -37,13 +35,14 @@ class Block():
         result = []
         for block in range(height - (offset - 1), height + 1):
             data = utils.make_request("getblockhash", [block])
+            nethash = utils.make_request("getnetworkhashps", [120, block])
 
-            if data["error"] is None:
-                block_hash = data["result"]
+            if data["error"] is None and nethash["error"] is None:
+                txid = data["result"]
                 data.pop("result")
-                data["result"] = utils.make_request("getblock", [block_hash])["result"]
+                data["result"] = utils.make_request("getblock", [txid])["result"]
                 data["result"]["txcount"] = len(data["result"]["tx"])
-                data["result"].pop("nTx")
+                data["result"]["nethash"] = int(nethash["result"])
 
                 result.append(data["result"])
 
