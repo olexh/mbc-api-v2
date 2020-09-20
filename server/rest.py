@@ -64,10 +64,6 @@ class BlockHeader(Resource):
     @stats.rest
     def get(self, bhash):
         data = utils.make_request("getblockheader", [bhash])
-        if data["error"] is None:
-            data["result"]["txcount"] = data["result"]["nTx"]
-            data["result"].pop("nTx")
-
         return data
 
 class TransactionInfo(Resource):
