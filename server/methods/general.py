@@ -11,7 +11,6 @@ class General():
             data["result"]["mempool"] = mempool
             data["result"]["reward"] = utils.reward(data["result"]["blocks"])
             data["result"].pop("verificationprogress")
-            data["result"].pop("initialblockdownload")
             data["result"].pop("pruned")
             data["result"].pop("softforks")
             data["result"].pop("bip9_softforks")
