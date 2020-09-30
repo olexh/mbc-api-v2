@@ -104,9 +104,10 @@ class AddressUnspent(Resource):
     def get(self, address):
         parser = reqparse.RequestParser()
         parser.add_argument("amount", type=int, default=0)
+        parser.add_argument("token", type=str, default="AOK")
         args = parser.parse_args()
 
-        return Address().unspent(address, args["amount"])
+        return Address().unspent(address, args["amount"], args["token"])
 
 class MempoolInfo(Resource):
     @stats.rest
