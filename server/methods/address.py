@@ -65,7 +65,7 @@ class Address():
 
     @classmethod
     def history(cls, address: str):
-        data = utils.make_request("getaddresstxids", [address])
+        data = utils.make_request("getaddresstxids", [address, True])
 
         if data["error"] is None:
             data["result"] = data["result"][::-1]
@@ -83,7 +83,7 @@ class Address():
         addresses = list(set(addresses))
         result = []
         for address in addresses:
-            data = utils.make_request("getaddresstxids", [address])
+            data = utils.make_request("getaddresstxids", [address, True])
             if data["error"] is None and "result" in data:
                 if len(data["result"]) > 0:
                     result.append(address)
