@@ -6,6 +6,21 @@ class Address():
         return utils.make_request("getaddressbalance", [address])
 
     @classmethod
+    def tokens_balance(cls, address: str):
+        data = utils.make_request("getaddressbalance", [address, True])
+        result = {}
+
+        for token in data["response"]:
+            result[token["tokenName"]] = {
+                "balance": token["balance"],
+                "received": token["received"],
+                "locked": token["locked"],
+                "units": token["units"]
+            }
+
+        return utils.response(result)
+
+    @classmethod
     def mempool(cls, address: str, raw=False):
         data = utils.make_request("getaddressmempool", [address])
 
