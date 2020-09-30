@@ -10,7 +10,7 @@ class Address():
         data = utils.make_request("getaddressbalance", [address, True])
         result = {}
 
-        for token in data["result"]:
+        for token in data["result"][1:]:
             result[token["tokenName"]] = {
                 "balance": token["balance"],
                 "received": token["received"],
