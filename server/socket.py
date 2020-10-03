@@ -14,8 +14,8 @@ def EstimateFee():
     return General().fee()
 
 @stats.socket
-def AddressUnspent(address=None, amount=0):
-    return Address().unspent(address, amount)
+def AddressUnspent(address=None, amount=0, token="AOK"):
+    return Address().unspent(address, amount, token)
 
 @stats.socket
 def AddressBalance(address=None):
