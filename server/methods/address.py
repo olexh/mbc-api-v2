@@ -3,15 +3,26 @@ from server import utils
 class Address():
     @classmethod
     def balance(cls, address: str):
-        balance = utils.make_request("getaddressbalance", [address])
-        tokens = utils.make_request("getaddressbalance", [address, True])
-        total = len(tokens["result"])
+        data = utils.make_request("getaddressbalance", [address, True])
+        received = 0
+        balance = 0
+        locked = 0
 
+        tokens = []
+        for token in data:
+            if data["tokenName"] == "AOK":
+                received = data["received"]
+                balance = data["balance"]
+                locked = data["locked"]
+            else:
+                tokens.append(token)
+
+        total = len(tokens)
         return utils.response({
-            "balance": balance["result"]["balance"],
-            "received": balance["result"]["received"],
-            "locked": balance["result"]["locked"],
-            "tokens": tokens["result"],
+            "received": received,
+            "balance": balance,
+            "locked": locked,
+            "tokens": tokens,
             "total": total
         })
 
