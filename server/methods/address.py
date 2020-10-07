@@ -6,8 +6,8 @@ class Address():
         data = utils.make_request("getaddressbalance", [address])
         tokens = utils.make_request("getaddressbalance", [address, True])
 
-        data["tokens"] = tokens
-        data["total"] = len(tokens)
+        data["result"]["total"] = len(tokens)
+        data["result"]["tokens"] = tokens
 
         return data
 
