@@ -76,10 +76,10 @@ class AddressBalance(Resource):
     def get(self, address):
         return Address().balance(address)
 
-class AddressTokensBalance(Resource):
-    @stats.rest
-    def get(self, address):
-        return Address().tokens_balance(address)
+# class AddressTokensBalance(Resource):
+#     @stats.rest
+#     def get(self, address):
+#         return Address().tokens_balance(address)
 
 class AddressHistory(Resource):
     @stats.rest
@@ -141,7 +141,7 @@ def init(api):
     api.add_resource(BlockHeader, "/header/<string:bhash>")
     api.add_resource(BlocksByRange, "/range/<int:height>")
     api.add_resource(AddressBalance, "/balance/<string:address>")
-    api.add_resource(AddressTokensBalance, "/tokens/<string:address>")
+    # api.add_resource(AddressTokensBalance, "/tokens/<string:address>")
     api.add_resource(AddressMempool, "/mempool/<string:address>")
     api.add_resource(AddressUnspent, "/unspent/<string:address>")
     api.add_resource(AddressHistory, "/history/<string:address>")

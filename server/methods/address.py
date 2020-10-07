@@ -3,22 +3,22 @@ from server import utils
 class Address():
     @classmethod
     def balance(cls, address: str):
-        return utils.make_request("getaddressbalance", [address])
-
-    @classmethod
-    def tokens_balance(cls, address: str):
         data = utils.make_request("getaddressbalance", [address, True])
-        result = {}
+        tokens = data["result"][1:]
 
-        for token in data["result"][1:]:
-            result[token["tokenName"]] = {
-                "balance": token["balance"],
-                "received": token["received"],
-                "locked": token["locked"],
-                "units": token["units"]
-            }
+        return {
+            "balance": data["result"][0]["balance"],
+            "received": data["result"][0]["received"],
+            "locked": data["result"][0]["locked"],
+            "tokens": tokens,
+            "total": len(tokens)
+        }
 
-        return utils.response(result)
+    # @classmethod
+    # def tokens_balance(cls, address: str):
+    #     data = utils.make_request("getaddressbalance", [address, True])
+    #     tokens = []
+    #     return utils.response(result)
 
     @classmethod
     def mempool(cls, address: str, raw=False):
