@@ -9,7 +9,7 @@ class Address():
         locked = 0
 
         tokens = []
-        for token in data:
+        for token in data["result"]:
             if token["tokenName"] == "AOK":
                 received = token["received"]
                 balance = token["balance"]
