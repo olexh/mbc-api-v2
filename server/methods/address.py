@@ -10,10 +10,10 @@ class Address():
 
         tokens = []
         for token in data:
-            if data["tokenName"] == "AOK":
-                received = data["received"]
-                balance = data["balance"]
-                locked = data["locked"]
+            if token["tokenName"] == "AOK":
+                received = token["received"]
+                balance = token["balance"]
+                locked = token["locked"]
             else:
                 tokens.append(token)
 
