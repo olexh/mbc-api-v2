@@ -17,7 +17,7 @@ class Esplora():
             "previousblockhash": result["previousblockhash"],
             "nonce": result["nonce"],
             "bits": int(result["bits"], 16),
-            "difficulty": result["proof-of-stake"]
+            "difficulty": result["difficulty"]
         }
 
     @classmethod
