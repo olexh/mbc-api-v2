@@ -25,10 +25,17 @@ class General():
 
     @classmethod
     def fee(cls):
-        return utils.response({
-            "feerate": utils.satoshis(0.001),
-            "blocks": 6
-        })
+        data = utils.make_request("estimatesmartfee", [6])
+
+        if data["error"] is None:
+            data["result"]["feerate"] = utils.satoshis(data["result"]["feerate"])
+        else:
+            data = utils.response({
+                "feerate": utils.satoshis(0.001),
+                "blocks": 6
+            })
+
+        return data
 
     @classmethod
     def mempool(cls):
