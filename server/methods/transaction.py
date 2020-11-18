@@ -37,7 +37,12 @@ class Transaction():
                 amount += vout["value"]
 
                 if vout["scriptPubKey"]["type"] == "cltv":
-                    timelock = int(vout["scriptPubKey"]["asm"].split(" ")[0])
+                    key = vout["scriptPubKey"]["asm"].split(" ")[0]
+                    timelock = 0
+
+                    if key.isdigit():
+                        timelock = int(key)
+
                     data["result"]["vout"][index]["scriptPubKey"]["timelock"] = timelock
 
             data["result"]["amount"] = amount
