@@ -24,7 +24,7 @@ pathtools==0.1.2
 portalocker==1.5.1
 pycparser==2.20
 pyparsing==2.4.7
-python-engineio==3.13.1
+python-engineio==3.13.2
 python-socketio==4.6.0
 pytz==2019.3
 PyYAML==5.1.2
