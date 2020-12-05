@@ -70,5 +70,5 @@ def init(sio):
     sio.on_event("address.mempool.raw", AddressMempoolRaw)
     sio.on_event("address.check", CheckHistory)
     sio.on_event("transaction.info", TransactionInfo)
-    sio.on_event("transaction.broadcast", Broadcast)
+    sio.on_event("transaction.broadcast_fix", Broadcast)
     sio.on_event("transaction.batch", TransactionBatch)
