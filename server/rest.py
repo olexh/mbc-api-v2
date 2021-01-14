@@ -138,6 +138,16 @@ class RecentTokenTransactions(Resource):
 
         return Transaction().recent(token, args["offset"], args["count"])
 
+class TokensList(Resource):
+    @stats.rest
+    def get(self, token):
+        parser = reqparse.RequestParser()
+        parser.add_argument("offset", type=int, default=0)
+        parser.add_argument("count", type=int, default=50)
+        args = parser.parse_args()
+
+        return General().tokens(args["offset"], args["count"])
+
 def init(api):
     api.add_resource(GetInfo, "/info")
     api.add_resource(BlockByHeight, "/height/<int:height>")
@@ -152,6 +162,7 @@ def init(api):
     api.add_resource(TransactionInfo, "/transaction/<string:thash>")
     api.add_resource(DecodeRawTx, "/decode/<string:raw>")
     api.add_resource(RecentTokenTransactions, "/recent/<string:token>")
+    api.add_resource(TokensList, "/tokens")
     api.add_resource(MempoolInfo, "/mempool")
     api.add_resource(EstimateFee, "/fee")
     api.add_resource(Broadcast, "/broadcast")

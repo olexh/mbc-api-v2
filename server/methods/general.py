@@ -49,3 +49,10 @@ class General():
                 data["result"]["tx"] = []
 
         return data
+
+    @classmethod
+    def tokens(cls, offset: int, count: int):
+        if count > 200:
+            count = 200
+
+        return utils.make_request("listtokens", [count, offset])
