@@ -9,13 +9,15 @@ class Address():
         locked = 0
 
         tokens = []
-        for token in data["result"]:
-            if token["tokenName"] == "AOK":
-                received = token["received"]
-                balance = token["balance"]
-                locked = token["locked"]
-            else:
-                tokens.append(token)
+
+        if data["error"] is None:
+            for token in data["result"]:
+                if token["tokenName"] == "AOK":
+                    received = token["received"]
+                    balance = token["balance"]
+                    locked = token["locked"]
+                else:
+                    tokens.append(token)
 
         total = len(tokens)
         return utils.response({

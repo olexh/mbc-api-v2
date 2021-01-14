@@ -83,3 +83,10 @@ class Transaction():
     @classmethod
     def spent(cls, txid: str):
         return utils.make_request("getspentinfo", [txid])
+
+    @classmethod
+    def recent(cls, token: str, offset: int, count: int):
+        if count > 200:
+            count = 200
+
+        return utils.make_request("gettokentransactions", [token, count, offset])

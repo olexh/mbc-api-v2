@@ -76,11 +76,6 @@ class AddressBalance(Resource):
     def get(self, address):
         return Address().balance(address)
 
-# class AddressTokensBalance(Resource):
-#     @stats.rest
-#     def get(self, address):
-#         return Address().tokens_balance(address)
-
 class AddressHistory(Resource):
     @stats.rest
     def get(self, address):
@@ -133,6 +128,16 @@ class Broadcast(Resource):
 
         return Transaction().broadcast(args["raw"])
 
+class RecentTokenTransactions(Resource):
+    @stats.rest
+    def get(self, token):
+        parser = reqparse.RequestParser()
+        parser.add_argument("offset", type=int, default=0)
+        parser.add_argument("count", type=int, default=50)
+        args = parser.parse_args()
+
+        return Transaction().recent(token, args["offset"], args["count"])
+
 def init(api):
     api.add_resource(GetInfo, "/info")
     api.add_resource(BlockByHeight, "/height/<int:height>")
@@ -141,12 +146,12 @@ def init(api):
     api.add_resource(BlockHeader, "/header/<string:bhash>")
     api.add_resource(BlocksByRange, "/range/<int:height>")
     api.add_resource(AddressBalance, "/balance/<string:address>")
-    # api.add_resource(AddressTokensBalance, "/tokens/<string:address>")
     api.add_resource(AddressMempool, "/mempool/<string:address>")
     api.add_resource(AddressUnspent, "/unspent/<string:address>")
     api.add_resource(AddressHistory, "/history/<string:address>")
     api.add_resource(TransactionInfo, "/transaction/<string:thash>")
     api.add_resource(DecodeRawTx, "/decode/<string:raw>")
+    api.add_resource(RecentTokenTransactions, "/recent/<string:token>")
     api.add_resource(MempoolInfo, "/mempool")
     api.add_resource(EstimateFee, "/fee")
     api.add_resource(Broadcast, "/broadcast")
