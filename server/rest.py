@@ -140,7 +140,7 @@ class RecentTokenTransactions(Resource):
 
 class TokensList(Resource):
     @stats.rest
-    def get(self, token):
+    def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument("offset", type=int, default=0)
         parser.add_argument("count", type=int, default=50)
