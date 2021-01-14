@@ -55,4 +55,4 @@ class General():
         if count > 200:
             count = 200
 
-        return utils.make_request("listtokens", [count, offset])
+        return utils.make_request("listtokens", ["*", True, count, offset])
