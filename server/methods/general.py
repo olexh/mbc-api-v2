@@ -51,8 +51,8 @@ class General():
         return data
 
     @classmethod
-    def tokens(cls, offset: int, count: int):
+    def tokens(cls, offset: int, count: int, search=""):
         if count > 200:
             count = 200
 
-        return utils.make_request("listtokens", ["*", True, count, offset])
+        return utils.make_request("listtokens", [f"{search}*", True, count, offset])
