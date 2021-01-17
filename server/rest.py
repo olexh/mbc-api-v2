@@ -147,7 +147,7 @@ class TokensList(Resource):
         parser.add_argument("count", type=int, default=50)
         args = parser.parse_args()
 
-        return General().tokens(args["offset"], args["count"])
+        return General().tokens(args["offset"], args["count"], args["search"])
 
 def init(api):
     api.add_resource(GetInfo, "/info")
