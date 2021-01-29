@@ -4,13 +4,11 @@ from server.methods.address import Address
 from server.methods.general import General
 from server.methods.esplora import Esplora
 from server.methods.block import Block
-from server import stats
 import config
 
-blueprint = Blueprint("esplora", __name__)
+esplora = Blueprint("esplora", __name__)
 
-@stats.rest
-@blueprint.route("/block/<string:bhash>", methods=["GET"])
+@esplora.route("/block/<string:bhash>", methods=["GET"])
 def block_hash(bhash):
     data = Block().hash(bhash)
 
@@ -21,9 +19,8 @@ def block_hash(bhash):
     else:
         return Response("Block not found", mimetype="text/plain", status=404)
 
-@stats.rest
-@blueprint.route("/blocks", defaults={"height": None}, methods=["GET"])
-@blueprint.route("/blocks/<int:height>", methods=["GET"])
+@esplora.route("/blocks", defaults={"height": None}, methods=["GET"])
+@esplora.route("/blocks/<int:height>", methods=["GET"])
 def blocks_range(height):
     data = General().info()
     blocks = []
@@ -38,8 +35,7 @@ def blocks_range(height):
 
     return jsonify(blocks)
 
-@stats.rest
-@blueprint.route("/address/<string:address>", methods=["GET"])
+@esplora.route("/address/<string:address>", methods=["GET"])
 def address_info(address):
     data = Address().history(address)
 
@@ -71,8 +67,7 @@ def address_info(address):
     else:
         return Response("Invalid Bitcoin address", mimetype="text/plain", status=400)
 
-@stats.rest
-@blueprint.route("/block/<string:bhash>/status", methods=["GET"])
+@esplora.route("/block/<string:bhash>/status", methods=["GET"])
 def block_status(bhash):
     data = Block().hash(bhash)
     next_best = None
@@ -91,8 +86,7 @@ def block_status(bhash):
         "next_best": next_best
     }
 
-@stats.rest
-@blueprint.route("/block/<string:bhash>/txs/<int:start>", methods=["GET"])
+@esplora.route("/block/<string:bhash>/txs/<int:start>", methods=["GET"])
 def block_transactions(bhash, start=0):
     data = Block().hash(bhash)
     transactions = []
@@ -112,8 +106,7 @@ def block_transactions(bhash, start=0):
     else:
         return Response("Block not found", mimetype="text/plain", status=404)
 
-@stats.rest
-@blueprint.route("/tx/<string:thash>", methods=["GET"])
+@esplora.route("/tx/<string:thash>", methods=["GET"])
 def transaction_info(thash):
     data = Transaction().info(thash)
 
@@ -124,8 +117,7 @@ def transaction_info(thash):
     else:
         return Response("Transaction not found", mimetype="text/plain", status=404)
 
-@stats.rest
-@blueprint.route("/tx/<string:thash>/outspends", methods=["GET"])
+@esplora.route("/tx/<string:thash>/outspends", methods=["GET"])
 def transaction_spent(thash):
     data = Transaction().spent(thash)
     outputs = []
@@ -154,9 +146,8 @@ def transaction_spent(thash):
     else:
         return Response("Transaction not found", mimetype="text/plain", status=404)
 
-@stats.rest
-@blueprint.route("/address/<string:address>/txs", defaults={"thash": None}, methods=["GET"])
-@blueprint.route("/address/<string:address>/txs/chain/<string:thash>", methods=["GET"])
+@esplora.route("/address/<string:address>/txs", defaults={"thash": None}, methods=["GET"])
+@esplora.route("/address/<string:address>/txs/chain/<string:thash>", methods=["GET"])
 def address_transactions(address, thash):
     data = Address().history(address)
     transactions = []
@@ -177,8 +168,7 @@ def address_transactions(address, thash):
     else:
         return Response("Invalid Bitcoin address", mimetype="text/plain", status=400)
 
-@stats.rest
-@blueprint.route("/block-height/<int:height>", methods=["GET"])
+@esplora.route("/block-height/<int:height>", methods=["GET"])
 def plain_block_hash(height):
     data = Block().height(height)
 
@@ -188,14 +178,12 @@ def plain_block_hash(height):
     else:
         return Response("Block not found", mimetype="text/plain", status=404)
 
-@stats.rest
-@blueprint.route("/blocks/tip/height", methods=["GET"])
+@esplora.route("/blocks/tip/height", methods=["GET"])
 def plain_tip_height():
     data = General().info()
     return Response(str(data["result"]["blocks"]), mimetype="text/plain")
 
-@stats.rest
-@blueprint.route("/mempool/recent", methods=["GET"])
+@esplora.route("/mempool/recent", methods=["GET"])
 def mempool_recent():
     data = General().mempool()
     result = []
@@ -213,8 +201,7 @@ def mempool_recent():
 
     return jsonify(result)
 
-@stats.rest
-@blueprint.route("/tx", methods=["POST"])
+@esplora.route("/tx", methods=["POST"])
 def broadcast_tx():
     raw = request.data.decode("utf-8")
     data = Transaction().broadcast(raw)
@@ -223,6 +210,3 @@ def broadcast_tx():
         return Response(data["result"], mimetype="text/plain")
 
     return Response(data["error"]["message"], mimetype="text/plain", status=400)
-
-def init(app):
-    app.register_blueprint(blueprint, url_prefix="/esplora")

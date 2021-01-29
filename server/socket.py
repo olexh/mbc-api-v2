@@ -2,50 +2,38 @@ from server.methods.transaction import Transaction
 from server.methods.general import General
 from server.methods.address import Address
 from server import subscription
-from server import stats
 from server import utils
 
-@stats.socket
 def GetInfo():
     return General().info()
 
-@stats.socket
 def EstimateFee():
     return General().fee()
 
-@stats.socket
 def AddressUnspent(address=None, amount=0, token="AOK"):
     return Address().unspent(address, amount, token)
 
-@stats.socket
 def AddressBalance(address=None):
     return Address().balance(address)
 
-@stats.socket
 def AddressHistory(address=None):
     return Address().history(address)
 
-@stats.socket
 def AddressMempool(address=None):
     return Address().mempool(address)
 
-@stats.socket
 def AddressMempoolRaw(address=None):
     return Address().mempool(address, True)
 
-@stats.socket
 def TransactionInfo(thash=None):
     return Transaction().info(thash)
 
-@stats.socket
 def Broadcast(raw=None):
     return Transaction().broadcast(raw)
 
-@stats.socket
 def CheckHistory(addresses=[]):
     return Address().check(addresses)
 
-@stats.socket
 def TransactionBatch(hashes=[]):
     result = []
     for thash in hashes:

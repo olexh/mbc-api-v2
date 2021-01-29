@@ -1,4 +1,3 @@
-from datetime import datetime
 import requests
 import config
 import math
@@ -20,12 +19,12 @@ def make_request(method, params=[]):
         return dead_response()
 
 def reward(height):
-    halvings = height // 12500000
+    halvings = height // 525960
 
-    if halvings >= 64:
+    if halvings >= 10:
         return 0
 
-    return int(satoshis(42.94967296) // (2 ** halvings))
+    return int(satoshis(4) // (2 ** halvings))
 
 def satoshis(value):
     return int(value * math.pow(10, 8))

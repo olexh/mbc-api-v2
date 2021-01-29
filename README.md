@@ -27,6 +27,10 @@ $ pip3 install -r requirements.txt
 $ python3 app.py
 ```
 
+```
+$ gunicorn app:app --worker-class eventlet -w 1 --bind 0.0.0.0:4321 --reload
+```
+
 All request should be send to this endpoint: `https://api.aok.network`
 
 Responce have following fields:

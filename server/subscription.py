@@ -2,7 +2,6 @@ from server.methods.transaction import Transaction
 from server.methods.general import General
 from server.methods.block import Block
 from flask import request
-from server import stats
 from server import utils
 from server import sio
 import server as state
@@ -56,13 +55,11 @@ def subscription_loop():
 
         sio.sleep(0)
 
-@stats.socket
 def Connect():
     state.connections += 1
     if state.thread is None:
         state.thread = sio.start_background_task(target=subscription_loop)
 
-@stats.socket
 def Disconnect():
     state.connections -= 1
     if request.sid in state.subscribers:
@@ -76,17 +73,14 @@ def Disconnect():
 
         state.subscribers.pop(request.sid)
 
-@stats.socket
 def SubscribeBlocks():
     flask_socketio.join_room("blocks", request.sid)
     return True
 
-@stats.socket
 def UnsubscribeBlocks():
     flask_socketio.leave_room("blocks", request.sid)
     return True
 
-@stats.socket
 def SubscribeAddress(address):
     if request.sid not in state.subscribers:
         state.subscribers[request.sid] = []
@@ -101,7 +95,6 @@ def SubscribeAddress(address):
 
     return True
 
-@stats.socket
 def UnubscribeAddress(address):
     if address in state.watch_addresses:
         if request.sid in state.watch_addresses[address]:

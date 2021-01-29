@@ -129,3 +129,7 @@ class Block():
     def blockhash(cls, height: int):
         data = utils.make_request("getblockhash", [height])
         return data["result"]
+
+    @classmethod
+    def header(cls, bhash: str):
+        return utils.make_request("getblockheader", [bhash])

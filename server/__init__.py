@@ -1,8 +1,10 @@
+from apscheduler.schedulers.background import BackgroundScheduler
+from flask import jsonify, render_template
 from flask_socketio import SocketIO
 from flask_caching import Cache
-from flask_restful import Api
 from flask_cors import CORS
 from flask import Flask
+from . import utils
 import eventlet
 import config
 import time
@@ -15,27 +17,33 @@ app.config["SECRET_KEY"] = config.secret
 cache = Cache(config={"CACHE_TYPE": "simple"})
 sio = SocketIO(app, cors_allowed_origins="*", message_queue="redis://")
 cache.init_app(app)
-api = Api(app)
 CORS(app)
 
 start_time = time.monotonic()
-socket_counter = 0
-rest_counter = 0
 
 watch_addresses = {}
 subscribers = {}
 connections = 0
 thread = None
 
-# from .sync import sync_blocks
-# sync_blocks()
+from .sync import sync_blocks
+from .esplora import esplora
+from .rest import rest
+from . import socket
 
-from server import esplora
-from server import routes
-from server import socket
-from server import rest
-
-esplora.init(app)
-routes.init(app)
+app.register_blueprint(esplora)
+app.register_blueprint(rest)
 socket.init(sio)
-rest.init(api)
+
+@app.route("/")
+def frontend():
+    return render_template("index.html")
+
+@app.errorhandler(404)
+def page_404(error):
+    return jsonify(utils.dead_response("Method not found"))
+
+
+background = BackgroundScheduler()
+background.add_job(sync_blocks, "interval", seconds=10)
+background.start()
