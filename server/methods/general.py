@@ -56,3 +56,13 @@ class General():
             count = 200
 
         return utils.make_request("listtokens", [f"{search}*", True, count, offset])
+
+    @classmethod
+    def current_height(cls):
+        data = utils.make_request("getblockchaininfo")
+        height = 0
+
+        if data["error"] is None:
+            height = data["result"]["blocks"]
+
+        return height

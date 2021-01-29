@@ -27,6 +27,9 @@ subscribers = {}
 connections = 0
 thread = None
 
+# from .sync import sync_blocks
+# sync_blocks()
+
 from server import esplora
 from server import routes
 from server import socket

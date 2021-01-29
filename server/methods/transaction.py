@@ -13,10 +13,10 @@ class Transaction():
         return utils.make_request("decoderawtransaction", [raw])
 
     @classmethod
-    def info(cls, thash: str):
+    def info(cls, thash: str, full=True):
         data = utils.make_request("getrawtransaction", [thash, True])
 
-        if data["error"] is None:
+        if data["error"] is None and full:
             if "blockhash" in data["result"]:
                 block = utils.make_request("getblock", [data["result"]["blockhash"]])["result"]
                 data["result"]["height"] = block["height"]

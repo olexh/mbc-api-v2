@@ -1,3 +1,4 @@
+from datetime import datetime
 import requests
 import config
 import math
@@ -29,5 +30,5 @@ def reward(height):
 def satoshis(value):
     return int(value * math.pow(10, 8))
 
-def amount(value):
-    return round(value / math.pow(10, 8), 8)
+def amount(value, decimals=8):
+    return round(value / math.pow(10, decimals), decimals)
