@@ -9,10 +9,10 @@ from datetime import datetime
 from pony import orm
 from . import utils
 
-def log_block(message, block):
+def log_block(message, block, tx):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     time = block.created.strftime("%Y-%m-%d %H:%M:%S")
-    print(f"{now} {message}: hash={block.blockhash} height={block.height} tx={len(block.transactions)} date='{time}'")
+    print(f"{now} {message}: hash={block.blockhash} height={block.height} tx={len(tx)} date='{time}'")
 
 def log_message(message):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -62,7 +62,7 @@ def sync_blocks():
             block_data["size"], block_data["bits"], signature
         )
 
-        log_block("New block", block)
+        log_block("New block", block, block_data["tx"])
 
         for index, txid in enumerate(block_data["tx"]):
             if block.stake and index == 0:
