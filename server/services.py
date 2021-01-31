@@ -24,6 +24,16 @@ class BlockService(object):
         )
 
     @classmethod
+    def get_by_hash(cls, bhash):
+        return Block.get(blockhash=bhash)
+
+    @classmethod
+    def blocks(cls, page=1):
+        return Block.select().order_by(
+            orm.desc(Block.height)
+        ).page(page, pagesize=100)
+
+    @classmethod
     def chart(cls):
         query = orm.select((b.height, len(b.transactions)) for b in Block)
         query = query.order_by(-1)
@@ -42,6 +52,12 @@ class TransactionService(object):
             locktime=locktime, size=size, coinbase=coinbase,
             coinstake=coinstake, block=block
         )
+
+    @classmethod
+    def transactions(cls, page=1, currency="AOK"):
+        query = orm.select((o.transaction, sum(o.amount), o.transaction.id) for o in Output if o.currency == currency).distinct()
+        query = query.order_by(-3)
+        return query.page(page, pagesize=100)
 
 class InputService(object):
     @classmethod
@@ -64,9 +80,3 @@ class OutputService(object):
             address=address, raw=raw, n=n, currency=currency,
             timelock=timelock
         )
-
-    @classmethod
-    def token_transactions(cls, page=1, currency="AOK"):
-        query = orm.select((o.transaction, sum(o.amount), o.transaction.id) for o in Output if o.currency == currency).distinct()
-        query = query.order_by(-3)
-        return query.page(page, pagesize=100)
