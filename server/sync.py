@@ -12,7 +12,7 @@ from . import utils
 def log_block(message, block):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     time = block.created.strftime("%Y-%m-%d %H:%M:%S")
-    print(f"{now} {message}: hash={block.blockhash} height={block.height} date='{time}'")
+    print(f"{now} {message}: hash={block.blockhash} height={block.height} tx={len(block.transactions)} date='{time}'")
 
 def log_message(message):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -39,7 +39,7 @@ def sync_blocks():
     current_height = General.current_height()
     latest_block = BlockService.latest_block()
 
-    log_message(f"Current node height: {current_height}, db height: {latest_block.height}")
+    # log_message(f"Current node height: {current_height}, db height: {latest_block.height}")
 
     while latest_block.blockhash != Block.blockhash(latest_block.height):
         log_block("Found reorg", latest_block)
