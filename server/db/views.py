@@ -102,7 +102,6 @@ def block_transactions(args, bhash):
             input_amount = 0
             outputs = []
             inputs = []
-            fee = 0
 
             for vin in transaction.inputs:
                 inputs.append({
@@ -118,7 +117,9 @@ def block_transactions(args, bhash):
                 outputs.append({
                     "address": vout.address,
                     "currency": vout.currency,
-                    "amount": float(vout.amount)
+                    "timelock": vout.timelock,
+                    "amount": float(vout.amount),
+                    "category": vout.category
                 })
 
                 if vout.currency == "AOK":
@@ -140,6 +141,54 @@ def block_transactions(args, bhash):
 
     else:
         return utils.dead_response("Block not found"), 404
+
+@db.route("/transaction/<string:txid>", methods=["GET"])
+@orm.db_session
+def transaction(txid):
+    transaction = TransactionService.get_by_txid(txid)
+
+    if transaction:
+        output_amount = 0
+        input_amount = 0
+        outputs = []
+        inputs = []
+
+        for vin in transaction.inputs:
+            inputs.append({
+                "address": vin.vout.address,
+                "currency": vin.vout.currency,
+                "amount": float(vin.vout.amount)
+            })
+
+            if vin.vout.currency == "AOK":
+                input_amount += vin.vout.amount
+
+        for vout in transaction.outputs:
+            outputs.append({
+                "address": vout.address,
+                "currency": vout.currency,
+                "timelock": vout.timelock,
+                "amount": float(vout.amount),
+                "category": vout.category
+            })
+
+            if vout.currency == "AOK":
+                output_amount += vout.amount
+
+        return utils.response({
+            "fee": float(input_amount - output_amount),
+            "timestamp": transaction.created.timestamp(),
+            "amount": float(transaction.amount),
+            "coinstake": transaction.coinstake,
+            "coinbase": transaction.coinbase,
+            "txid": transaction.txid,
+            "size": transaction.size,
+            "outputs": outputs,
+            "inputs": inputs
+        })
+
+    else:
+        return utils.dead_response("Transaction not found"), 404
 
 @db.route("/chart", methods=["GET"])
 @orm.db_session
