@@ -59,10 +59,10 @@ class General():
 
     @classmethod
     def current_height(cls):
-        data = utils.make_request("getblockchaininfo")
+        data = utils.make_request("getblockcount")
         height = 0
 
         if data["error"] is None:
-            height = data["result"]["blocks"]
+            height = data["result"]
 
         return height

@@ -4,11 +4,6 @@ offset_args = {
     "offset": fields.Int(missing=0, validate=validate.Range(min=0))
 }
 
-count_args = {
-    "offset": fields.Int(missing=0, validate=validate.Range(min=0)),
-    "count": fields.Int(missing=50, validate=validate.Range(min=0))
-}
-
 token_list_args = {
     "offset": fields.Int(missing=0, validate=validate.Range(min=0)),
     "count": fields.Int(missing=50, validate=validate.Range(min=0)),

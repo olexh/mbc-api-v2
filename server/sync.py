@@ -58,13 +58,19 @@ def sync_blocks():
 
         log_block("New block", block)
 
-        for txid in block_data["tx"]:
-            tx_data = Transaction.info(txid)["result"]
+        for index, txid in enumerate(block_data["tx"]):
+            if block.stake and index == 0:
+                continue
+
+            tx_data = Transaction.info(txid, False)["result"]
             created = datetime.fromtimestamp(tx_data["time"])
+            coinbase = block.stake is False and index == 0
+            coinstake = block.stake and index == 1
 
             transaction = TransactionService.create(
                 utils.amount(tx_data["amount"]), tx_data["txid"],
-                created, tx_data["locktime"], tx_data["size"], block
+                created, tx_data["locktime"], tx_data["size"], block,
+                coinbase, coinstake
             )
 
             for vin in tx_data["vin"]:
@@ -90,6 +96,9 @@ def sync_blocks():
                     timelock = vout["scriptPubKey"]["token"]["token_lock_time"]
                     currency = vout["scriptPubKey"]["token"]["name"]
                     amount = vout["scriptPubKey"]["token"]["amount"]
+
+                if "timelock" in vout["scriptPubKey"]:
+                    timelock = vout["scriptPubKey"]["timelock"]
 
                 OutputService.create(
                     transaction, amount, vout["scriptPubKey"]["type"],

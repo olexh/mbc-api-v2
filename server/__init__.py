@@ -1,4 +1,3 @@
-from apscheduler.schedulers.background import BackgroundScheduler
 from flask import jsonify, render_template
 from flask_socketio import SocketIO
 from flask_caching import Cache
@@ -26,13 +25,14 @@ subscribers = {}
 connections = 0
 thread = None
 
-from .sync import sync_blocks
 from .esplora import esplora
 from .rest import rest
 from . import socket
+from .db import db
 
 app.register_blueprint(esplora)
 app.register_blueprint(rest)
+app.register_blueprint(db)
 socket.init(sio)
 
 @app.route("/")
@@ -42,8 +42,3 @@ def frontend():
 @app.errorhandler(404)
 def page_404(error):
     return jsonify(utils.dead_response("Method not found"))
-
-
-background = BackgroundScheduler()
-background.add_job(sync_blocks, "interval", seconds=10)
-background.start()

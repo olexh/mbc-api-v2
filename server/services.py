@@ -23,17 +23,24 @@ class BlockService(object):
             signature=signature
         )
 
+    @classmethod
+    def chart(cls):
+        query = orm.select((b.height, len(b.transactions)) for b in Block)
+        query = query.order_by(-1)
+        return query[:1440]
+
 class TransactionService(object):
     @classmethod
     def get_by_txid(cls, txid):
         return Transaction.get(txid=txid)
 
     @classmethod
-    def create(cls, amount, txid, created, locktime, size, block):
+    def create(cls, amount, txid, created, locktime, size, block,
+               coinbase=False, coinstake=False):
         return Transaction(
             amount=amount, txid=txid, created=created,
-            locktime=locktime, size=size,
-            block=block
+            locktime=locktime, size=size, coinbase=coinbase,
+            coinstake=coinstake, block=block
         )
 
 class InputService(object):
@@ -57,3 +64,9 @@ class OutputService(object):
             address=address, raw=raw, n=n, currency=currency,
             timelock=timelock
         )
+
+    @classmethod
+    def token_transactions(cls, page=1, currency="AOK"):
+        query = orm.select((o.transaction, sum(o.amount), o.transaction.id) for o in Output if o.currency == currency).distinct()
+        query = query.order_by(-3)
+        return query.page(page, pagesize=100)

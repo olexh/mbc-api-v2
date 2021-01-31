@@ -27,7 +27,7 @@ def reward(height):
     return int(satoshis(4) // (2 ** halvings))
 
 def satoshis(value):
-    return int(value * math.pow(10, 8))
+    return int(float(value) * math.pow(10, 8))
 
 def amount(value, decimals=8):
-    return round(value / math.pow(10, decimals), decimals)
+    return round(float(value) / math.pow(10, decimals), decimals)

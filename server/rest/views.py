@@ -1,6 +1,6 @@
-from .args import offset_args, range_args, count_args
 from .args import broadcast_args, unspent_args
 from ..methods.transaction import Transaction
+from .args import offset_args, range_args
 from webargs.flaskparser import use_args
 from ..methods.general import General
 from ..methods.address import Address
@@ -96,18 +96,6 @@ def fee():
 def broadcast(args):
     return Transaction.broadcast(args["raw"])
 
-# ToDo: implement db here
-@rest.route("/chart", methods=["GET"])
-def chart():
-    return Block.chart()
-
-# ToDo: implement db here
-@rest.route("/recent/<string:token>", methods=["GET"])
-@use_args(count_args)
-def token_transactions(args, token):
-    return Transaction.recent(token, args["offset"], args["count"])
-
-# ToDo: implement db here
 @rest.route("/tokens", methods=["GET"])
 @use_args(token_list_args)
 def tokens_list(args, token):

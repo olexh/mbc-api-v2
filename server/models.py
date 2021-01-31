@@ -1,8 +1,13 @@
 from datetime import datetime
 from decimal import Decimal
 from pony import orm
+import config
 
-db = orm.Database("sqlite", "../service.db", create_db=True)
+db = orm.Database(
+    provider="mysql", host=config.db["host"],
+    user=config.db["user"], passwd=config.db["password"],
+    db=config.db["db"]
+)
 
 class Block(db.Entity):
     _table_ = "chain_blocks"
@@ -30,6 +35,8 @@ class Transaction(db.Entity):
     _table_ = "chain_transactions"
 
     amount = orm.Required(Decimal, precision=20, scale=8)
+    coinstake = orm.Required(bool, default=False)
+    coinbase = orm.Required(bool, default=False)
     txid = orm.Required(str, index=True)
     created = orm.Required(datetime)
     locktime = orm.Required(int)
@@ -52,7 +59,7 @@ class Output(db.Entity):
     _table_ = "chain_outputs"
 
     amount = orm.Required(Decimal, precision=20, scale=8)
-    currency = orm.Required(str, default="AOK")
+    currency = orm.Required(str, default="AOK", index=True)
     timelock = orm.Required(int, default=0)
     address = orm.Required(str, index=True)
     category = orm.Optional(str)
@@ -61,6 +68,10 @@ class Output(db.Entity):
 
     transaction = orm.Required("Transaction")
     vin = orm.Optional("Input")
+
+    @property
+    def spent(self):
+        return self.vin is not None
 
     orm.composite_index(transaction, n)
 
