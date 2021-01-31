@@ -39,6 +39,8 @@ def sync_blocks():
     current_height = General.current_height()
     latest_block = BlockService.latest_block()
 
+    log_message(f"Current node height: {current_height}, db height: {latest_block.height}")
+
     while latest_block.blockhash != Block.blockhash(latest_block.height):
         log_block("Found reorg", latest_block)
 
