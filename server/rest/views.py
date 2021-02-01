@@ -98,5 +98,5 @@ def broadcast(args):
 
 @rest.route("/tokens", methods=["GET"])
 @use_args(token_list_args)
-def tokens_list(args, token):
+def tokens_list(args):
     return General.tokens(args["offset"], args["count"], args["search"])
