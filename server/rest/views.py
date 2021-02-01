@@ -46,7 +46,7 @@ def block(args, bhash):
     if data["error"] is None:
         data["result"]["tx"] = data["result"]["tx"][args["offset"]:args["offset"] + 10]
 
-    return data
+    return utils.response(data)
 
 @rest.route("/header/<string:bhash>", methods=["GET"])
 def header(bhash):
@@ -68,7 +68,7 @@ def history(args, address):
     if data["error"] is None:
         data["result"]["tx"] = data["result"]["tx"][args["offset"]:args["offset"] + 10]
 
-    return data
+    return utils.response(data)
 
 @rest.route("/mempool/<string:address>", methods=["GET"])
 def mempool(address):
