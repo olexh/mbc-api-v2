@@ -113,7 +113,9 @@ def sync_blocks():
                     timelock = vout["scriptPubKey"]["timelock"]
 
                 script = vout["scriptPubKey"]["addresses"][0]
-                if not (address := AddressService.get_by_address(script)):
+                address = AddressService.get_by_address(script)
+
+                if not address:
                     address = AddressService.create(script)
 
                 address.transactions.add(transaction)
@@ -125,7 +127,9 @@ def sync_blocks():
                     timelock
                 )
 
-                if not (balance := BalanceService.get_by_currency(address, currency)):
+                balance = BalanceService.get_by_currency(address, currency)
+
+                if not balance:
                     balance = BalanceService.create(address, currency)
 
                 balance.balance += output.amount
