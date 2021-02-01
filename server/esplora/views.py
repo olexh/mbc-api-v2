@@ -8,7 +8,7 @@ import config
 
 esplora = Blueprint("esplora", __name__)
 
-@esplora.route("/block/<string:bhash>", methods=["GET"])
+@esplora.route("/block/<string:bhash>", methods=["GET"], url_prefix="/esplora/")
 def block_hash(bhash):
     data = Block().hash(bhash)
 
