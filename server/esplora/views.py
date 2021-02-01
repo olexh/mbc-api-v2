@@ -6,9 +6,9 @@ from server.methods.esplora import Esplora
 from server.methods.block import Block
 import config
 
-esplora = Blueprint("esplora", __name__)
+esplora = Blueprint("esplora", __name__, url_prefix="/esplora/")
 
-@esplora.route("/block/<string:bhash>", methods=["GET"], url_prefix="/esplora/")
+@esplora.route("/block/<string:bhash>", methods=["GET"])
 def block_hash(bhash):
     data = Block().hash(bhash)
 
