@@ -47,9 +47,10 @@ def transactions(args, token):
     return utils.response(result)
 
 @db.route("/blocks", methods=["GET"])
+@use_args(page_args, location="query")
 @orm.db_session
-def blocks():
-    blocks = BlockService.blocks()
+def blocks(args):
+    blocks = BlockService.blocks(args["page"])
     result = []
 
     for block in blocks:
