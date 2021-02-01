@@ -65,7 +65,9 @@ def blocks():
 @db.route("/block/<string:bhash>", methods=["GET"])
 @orm.db_session
 def block(bhash):
-    if (block := BlockService.get_by_hash(bhash)):
+    block = BlockService.get_by_hash(bhash)
+
+    if block:
         return utils.response({
             "reward": float(block.reward),
             "signature": block.signature,
@@ -90,7 +92,9 @@ def block(bhash):
 @use_args(page_args, location="query")
 @orm.db_session
 def block_transactions(args, bhash):
-    if (block := BlockService.get_by_hash(bhash)):
+    block = BlockService.get_by_hash(bhash)
+
+    if block:
         transactions = block.transactions.page(args["page"])
         result = []
 
@@ -115,9 +119,10 @@ def transaction(txid):
 @use_args(page_args, location="query")
 @orm.db_session
 def history(args, address):
+    address = AddressService.get_by_address(address)
     result = []
 
-    if (address := AddressService.get_by_address(address)):
+    if address:
         transactions = address.transactions.order_by(
             orm.desc(Transaction.id)
         ).page(args["page"], pagesize=100)
