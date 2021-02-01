@@ -133,6 +133,22 @@ def history(args, address):
 
     return utils.response(result)
 
+@db.route("/richlist", defaults={"token": "AOK"}, methods=["GET"])
+@db.route("/richlist/<string:token>", methods=["GET"])
+@use_args(page_args, location="query")
+@orm.db_session
+def richlist(args, token):
+    addresses = AddressService.richlist(args["page"], token)
+    result = []
+
+    for entry in addresses:
+        result.append({
+            "address": entry[0].address,
+            "balance": float(entry[1])
+        })
+
+    return utils.response(result)
+
 @db.route("/chart", methods=["GET"])
 @orm.db_session
 def chart():
