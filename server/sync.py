@@ -1,6 +1,8 @@
 from .methods.transaction import Transaction
 from .services import TransactionService
+from .services import BalanceService
 from .methods.general import General
+from .services import AddressService
 from .services import OutputService
 from .services import InputService
 from .services import BlockService
@@ -9,7 +11,7 @@ from datetime import datetime
 from pony import orm
 from . import utils
 
-def log_block(message, block, tx):
+def log_block(message, block, tx=[]):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     time = block.created.strftime("%Y-%m-%d %H:%M:%S")
     print(f"{now} {message}: hash={block.blockhash} height={block.height} tx={len(tx)} date='{time}'")
@@ -39,7 +41,7 @@ def sync_blocks():
     current_height = General.current_height()
     latest_block = BlockService.latest_block()
 
-    # log_message(f"Current node height: {current_height}, db height: {latest_block.height}")
+    log_message(f"Current node height: {current_height}, db height: {latest_block.height}")
 
     while latest_block.blockhash != Block.blockhash(latest_block.height):
         log_block("Found reorg", latest_block)
@@ -86,6 +88,10 @@ def sync_blocks():
                 prev_tx = TransactionService.get_by_txid(vin["txid"])
                 prev_out = OutputService.get_by_prev(prev_tx, vin["vout"])
 
+                prev_out.address.transactions.add(transaction)
+                balance = BalanceService.get_by_currency(prev_out.address, prev_out.currency)
+                balance.balance -= prev_out.amount
+
                 InputService.create(
                     vin["sequence"], vin["vout"], transaction, prev_out
                 )
@@ -106,15 +112,22 @@ def sync_blocks():
                 if "timelock" in vout["scriptPubKey"]:
                     timelock = vout["scriptPubKey"]["timelock"]
 
-                OutputService.create(
+                script = vout["scriptPubKey"]["addresses"][0]
+                if not (address := AddressService.get_by_address(script)):
+                    address = AddressService.create(script)
+
+                address.transactions.add(transaction)
+
+                output = OutputService.create(
                     transaction, amount, vout["scriptPubKey"]["type"],
-                    vout["scriptPubKey"]["addresses"][0],
-                    vout["scriptPubKey"]["hex"],
+                    address, vout["scriptPubKey"]["hex"],
                     vout["n"], currency,
                     timelock
                 )
 
+                if not (balance := BalanceService.get_by_currency(address, currency)):
+                    balance = BalanceService.create(address, currency)
+
+                balance.balance += output.amount
+
         orm.commit()
-
-
-sync_blocks()

@@ -1,6 +1,8 @@
 from ..services import TransactionService
 from webargs.flaskparser import use_args
+from ..services import AddressService
 from ..services import BlockService
+from ..models import Transaction
 from .args import page_args
 from flask import Blueprint
 from .. import utils
@@ -63,9 +65,7 @@ def blocks():
 @db.route("/block/<string:bhash>", methods=["GET"])
 @orm.db_session
 def block(bhash):
-    block = BlockService.get_by_hash(bhash)
-
-    if block:
+    if (block := BlockService.get_by_hash(bhash)):
         return utils.response({
             "reward": float(block.reward),
             "signature": block.signature,
@@ -84,63 +84,22 @@ def block(bhash):
             "bits": block.bits
         })
 
-    else:
-        return utils.dead_response("Block not found"), 404
+    return utils.dead_response("Block not found"), 404
 
 @db.route("/block/<string:bhash>/transactions", methods=["GET"])
 @use_args(page_args, location="query")
 @orm.db_session
 def block_transactions(args, bhash):
-    block = BlockService.get_by_hash(bhash)
-
-    if block:
+    if (block := BlockService.get_by_hash(bhash)):
         transactions = block.transactions.page(args["page"])
         result = []
 
         for transaction in transactions:
-            output_amount = 0
-            input_amount = 0
-            outputs = []
-            inputs = []
-
-            for vin in transaction.inputs:
-                inputs.append({
-                    "address": vin.vout.address,
-                    "currency": vin.vout.currency,
-                    "amount": float(vin.vout.amount)
-                })
-
-                if vin.vout.currency == "AOK":
-                    input_amount += vin.vout.amount
-
-            for vout in transaction.outputs:
-                outputs.append({
-                    "address": vout.address,
-                    "currency": vout.currency,
-                    "timelock": vout.timelock,
-                    "amount": float(vout.amount),
-                    "category": vout.category
-                })
-
-                if vout.currency == "AOK":
-                    output_amount += vout.amount
-
-            result.append({
-                "fee": float(input_amount - output_amount),
-                "timestamp": transaction.created.timestamp(),
-                "amount": float(transaction.amount),
-                "coinstake": transaction.coinstake,
-                "coinbase": transaction.coinbase,
-                "txid": transaction.txid,
-                "size": transaction.size,
-                "outputs": outputs,
-                "inputs": inputs
-            })
+            result.append(transaction.display())
 
         return utils.response(result)
 
-    else:
-        return utils.dead_response("Block not found"), 404
+    return utils.dead_response("Block not found"), 404
 
 @db.route("/transaction/<string:txid>", methods=["GET"])
 @orm.db_session
@@ -148,47 +107,25 @@ def transaction(txid):
     transaction = TransactionService.get_by_txid(txid)
 
     if transaction:
-        output_amount = 0
-        input_amount = 0
-        outputs = []
-        inputs = []
+        return utils.response(transaction.display())
 
-        for vin in transaction.inputs:
-            inputs.append({
-                "address": vin.vout.address,
-                "currency": vin.vout.currency,
-                "amount": float(vin.vout.amount)
-            })
+    return utils.dead_response("Transaction not found"), 404
 
-            if vin.vout.currency == "AOK":
-                input_amount += vin.vout.amount
+@db.route("/history/<string:address>", methods=["GET"])
+@use_args(page_args, location="query")
+@orm.db_session
+def history(args, address):
+    result = []
 
-        for vout in transaction.outputs:
-            outputs.append({
-                "address": vout.address,
-                "currency": vout.currency,
-                "timelock": vout.timelock,
-                "amount": float(vout.amount),
-                "category": vout.category
-            })
+    if (address := AddressService.get_by_address(address)):
+        transactions = address.transactions.order_by(
+            orm.desc(Transaction.id)
+        ).page(args["page"], pagesize=100)
 
-            if vout.currency == "AOK":
-                output_amount += vout.amount
+        for transaction in transactions:
+            result.append(transaction.display())
 
-        return utils.response({
-            "fee": float(input_amount - output_amount),
-            "timestamp": transaction.created.timestamp(),
-            "amount": float(transaction.amount),
-            "coinstake": transaction.coinstake,
-            "coinbase": transaction.coinbase,
-            "txid": transaction.txid,
-            "size": transaction.size,
-            "outputs": outputs,
-            "inputs": inputs
-        })
-
-    else:
-        return utils.dead_response("Transaction not found"), 404
+    return utils.response(result)
 
 @db.route("/chart", methods=["GET"])
 @orm.db_session
@@ -197,9 +134,6 @@ def chart():
     result = {}
 
     for entry in data:
-        height = entry[0]
-        count = entry[1]
-
-        result[height] = count
+        result[entry[0]] = entry[1]
 
     return utils.response(result)

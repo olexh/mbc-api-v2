@@ -1,4 +1,6 @@
 from .models import Transaction
+from .models import Address
+from .models import Balance
 from .models import Output
 from .models import Input
 from .models import Block
@@ -65,6 +67,28 @@ class InputService(object):
         return Input(
             sequence=sequence, transaction=transaction,
             vout=vout, n=n,
+        )
+
+class AddressService(object):
+    @classmethod
+    def get_by_address(cls, address):
+        return Address.get(address=address)
+
+    @classmethod
+    def create(cls, address):
+        return Address(address=address)
+
+class BalanceService(object):
+    @classmethod
+    def get_by_currency(cls, address, currency):
+        return Balance.get(
+            address=address, currency=currency
+        )
+
+    @classmethod
+    def create(cls, address, currency):
+        return Balance(
+            address=address, currency=currency
         )
 
 class OutputService(object):
