@@ -1,6 +1,8 @@
 from ..services import TransactionService
 from webargs.flaskparser import use_args
 from ..services import AddressService
+from ..services import BalanceService
+from ..services import OutputService
 from ..services import BlockService
 from ..models import Transaction
 from .args import page_args
@@ -157,5 +159,28 @@ def chart():
 
     for entry in data:
         result[entry[0]] = entry[1]
+
+    return utils.response(result)
+
+@db.route("/balance/<string:address>", methods=["GET"])
+@orm.db_session
+def test(address):
+    address = AddressService.get_by_address(address)
+    block = BlockService.latest_block()
+    result = []
+
+    if address:
+        for balance in address.balances:
+            locked_time = OutputService.locked_time(address, block.created.timestamp(), balance.currency)
+            locked_height = OutputService.locked_time(address, block.height, balance.currency)
+
+            locked = locked_time + locked_height
+            unspent = balance.balance - locked
+
+            result.append({
+                "currency": balance.currency,
+                "balance": float(unspent),
+                "locked": float(locked)
+            })
 
     return utils.response(result)

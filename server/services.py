@@ -114,3 +114,15 @@ class OutputService(object):
             address=address, raw=raw, n=n, currency=currency,
             timelock=timelock
         )
+
+    @classmethod
+    def locked_height(cls, address, height, currency="AOK"):
+        return orm.select(
+            sum(o.amount) for o in Output if o.spent is False and o.address == address and o.currency == currency and o.timelock <= 500000000 and o.timelock > height
+        ).first()
+
+    @classmethod
+    def locked_time(cls, address, time, currency="AOK"):
+        return orm.select(
+            sum(o.amount) for o in Output if o.spent is False and o.address == address and o.currency == currency and o.timelock > 500000000 and o.timelock > time
+        ).first()
