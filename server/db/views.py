@@ -172,7 +172,7 @@ def test(address):
     if address:
         for balance in address.balances:
             locked_time = OutputService.locked_time(address, block.created.timestamp(), balance.currency)
-            locked_height = OutputService.locked_time(address, block.height, balance.currency)
+            locked_height = OutputService.locked_height(address, block.height, balance.currency)
 
             locked = locked_time + locked_height
             unspent = balance.balance - locked

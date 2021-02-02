@@ -49,6 +49,10 @@ class Transaction(db.Entity):
     addresses = orm.Set("Address")
 
     def display(self):
+        latest_blocks = Block.select().order_by(
+            orm.desc(Block.height)
+        ).first()
+
         output_amount = 0
         input_amount = 0
         outputs = []
@@ -77,10 +81,12 @@ class Transaction(db.Entity):
                 output_amount += vout.amount
 
         return {
+            "confirmations": latest_blocks.height - self.block.height,
             "fee": float(input_amount - output_amount),
             "timestamp": self.created.timestamp(),
             "amount": float(self.amount),
             "coinstake": self.coinstake,
+            "height": self.block.height,
             "coinbase": self.coinbase,
             "txid": self.txid,
             "size": self.size,
