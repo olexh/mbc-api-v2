@@ -135,6 +135,24 @@ def history(args, address):
 
     return utils.response(result)
 
+@db.route("/stats/<string:address>", methods=["GET"])
+@orm.db_session
+def count(address):
+    address = AddressService.get_by_address(address)
+    transactions = 0
+    tokens = 0
+
+    if address:
+        transactions = len(address.transactions)
+        for balance in address.balances:
+            if balance.currency != "AOK" and balance.balance > 0:
+                tokens += 1
+
+    return utils.response({
+        "transactions": transactions,
+        "tokens": tokens
+    })
+
 @db.route("/richlist", defaults={"token": "AOK"}, methods=["GET"])
 @db.route("/richlist/<string:token>", methods=["GET"])
 @use_args(page_args, location="query")
