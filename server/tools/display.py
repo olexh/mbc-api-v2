@@ -60,8 +60,10 @@ def tx_to_db(data):
         if currency == "AOK":
             output_amount += amount
 
+    confirmations = result["confirmations"] if "confirmations" in result else 0
+
     return {
-        "confirmations": result["confirmations"],
+        "confirmations": confirmations,
         "fee": float(input_amount - output_amount),
         "timestamp": result["timestamp"],
         "amount": utils.amount(result["amount"]),

@@ -1,4 +1,5 @@
 from ..methods.transaction import Transaction as NodeTransaction
+from ..methods.general import General as NodeGeneral
 from ..services import TransactionService
 from webargs.flaskparser import use_args
 from ..services import AddressService
@@ -207,3 +208,20 @@ def test(address):
             })
 
     return utils.response(result)
+
+@db.route("/mempool", methods=["GET"])
+@orm.db_session
+def mempool():
+    data = NodeGeneral.mempool()
+
+    if not data["error"]:
+        mempool = data["result"]["tx"]
+        new = []
+
+        for txid in mempool:
+            tx = NodeTransaction.info(txid)
+            new.append(display.tx_to_db(tx))
+
+        data["result"]["tx"] = new
+
+    return data
