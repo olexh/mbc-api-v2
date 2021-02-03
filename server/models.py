@@ -91,6 +91,7 @@ class Transaction(db.Entity):
             "txid": self.txid,
             "size": self.size,
             "outputs": outputs,
+            "mempool": False,
             "inputs": inputs
         }
 

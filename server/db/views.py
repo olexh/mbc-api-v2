@@ -1,12 +1,13 @@
+from ..methods.transaction import Transaction as NodeTransaction
 from ..services import TransactionService
 from webargs.flaskparser import use_args
 from ..services import AddressService
-from ..services import BalanceService
 from ..services import OutputService
 from ..services import BlockService
 from ..models import Transaction
 from .args import page_args
 from flask import Blueprint
+from ..tools import display
 from .. import utils
 from pony import orm
 
@@ -115,6 +116,10 @@ def transaction(txid):
 
     if transaction:
         return utils.response(transaction.display())
+
+    data = NodeTransaction.info(txid)
+    if not data["error"]:
+        return display.tx_to_db(data)
 
     return utils.dead_response("Transaction not found"), 404
 
