@@ -61,6 +61,11 @@ class TransactionService(object):
         query = query.order_by(-3)
         return query.page(page, pagesize=100)
 
+    @classmethod
+    def total_transactions(cls, currency="AOK"):
+        query = orm.select((orm.count(o.transaction)) for o in Output if o.currency == currency).distinct()
+        return query.first()
+
 class InputService(object):
     @classmethod
     def create(cls, sequence, n, transaction, vout):

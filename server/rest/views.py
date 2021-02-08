@@ -4,6 +4,7 @@ from .args import offset_args, range_args
 from webargs.flaskparser import use_args
 from ..methods.general import General
 from ..methods.address import Address
+from ..methods.token import Token
 from ..methods.block import Block
 from .args import token_list_args
 from flask import Blueprint
@@ -99,4 +100,4 @@ def broadcast(args):
 @rest.route("/tokens", methods=["GET"])
 @use_args(token_list_args, location="query")
 def tokens_list(args):
-    return General.tokens(args["offset"], args["count"], args["search"])
+    return Token.list(args["offset"], args["count"], args["search"])

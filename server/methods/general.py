@@ -51,13 +51,6 @@ class General():
         return data
 
     @classmethod
-    def tokens(cls, offset: int, count: int, search=""):
-        if count > 200:
-            count = 200
-
-        return utils.make_request("listtokens", [f"{search}*", True, count, offset])
-
-    @classmethod
     def current_height(cls):
         data = utils.make_request("getblockcount")
         height = 0

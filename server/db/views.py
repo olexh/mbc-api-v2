@@ -1,5 +1,6 @@
 from ..methods.transaction import Transaction as NodeTransaction
 from ..methods.general import General as NodeGeneral
+from ..methods.token import Token as TokenGeneral
 from ..services import TransactionService
 from webargs.flaskparser import use_args
 from ..services import AddressService
@@ -120,7 +121,8 @@ def transaction(txid):
 
     data = NodeTransaction.info(txid)
     if not data["error"]:
-        return display.tx_to_db(data)
+        result = display.tx_to_db(data)
+        return utils.response(result)
 
     return utils.dead_response("Transaction not found"), 404
 
@@ -225,3 +227,14 @@ def mempool():
         data["result"]["tx"] = new
 
     return data
+
+@db.route("/token/<string:name>", methods=["GET"])
+@orm.db_session
+def token_data(name):
+    data = TokenGeneral.data(name)
+
+    if data["result"]:
+        result = display.token_to_db(data)
+        return utils.response(result)
+
+    return utils.dead_response("Token not found"), 404

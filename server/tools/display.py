@@ -1,5 +1,16 @@
 from .. import utils
 
+def token_to_db(data):
+    result = data["result"]
+
+    return {
+        "reissuable": True if result["reissuable"] == 1 else False,
+        "amount": result["amount"],
+        "units": result["units"],
+        "name": result["name"],
+        "total": None
+    }
+
 def tx_to_db(data):
     result = data["result"]
 
