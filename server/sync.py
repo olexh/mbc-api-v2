@@ -64,6 +64,8 @@ def sync_blocks():
             block_data["size"], block_data["bits"], signature
         )
 
+        block.previous_block = latest_block
+
         log_block("New block", block, block_data["tx"])
 
         for index, txid in enumerate(block_data["tx"]):
@@ -134,4 +136,5 @@ def sync_blocks():
 
                 balance.balance += output.amount
 
+        latest_block = block
         orm.commit()
