@@ -144,9 +144,9 @@ class Output(db.Entity):
     raw = orm.Optional(str)
     n = orm.Required(int)
 
+    vin = orm.Optional("Input", cascade_delete=True)
     transaction = orm.Required("Transaction")
     address = orm.Optional("Address")
-    vin = orm.Optional("Input")
 
     @property
     def spent(self):
@@ -158,9 +158,6 @@ class Output(db.Entity):
         )
 
         balance.balance -= self.amount
-
-        if self.vin:
-            self.vin.delete()
 
     orm.composite_index(transaction, n)
 
