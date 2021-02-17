@@ -93,7 +93,7 @@ def fee():
     return General.fee()
 
 @rest.route("/broadcast", methods=["POST"])
-@use_args(broadcast_args, location="json")
+@use_args(broadcast_args, location="form")
 def broadcast(args):
     return Transaction.broadcast(args["raw"])
 

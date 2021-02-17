@@ -7,6 +7,7 @@ from ..services import AddressService
 from ..services import OutputService
 from ..services import BlockService
 from ..models import Transaction
+from .args import broadcast_args
 from .args import page_args
 from flask import Blueprint
 from ..tools import display
@@ -238,3 +239,8 @@ def token_data(name):
         return utils.response(result)
 
     return utils.dead_response("Token not found"), 404
+
+@db.route("/broadcast", methods=["POST"])
+@use_args(broadcast_args, location="json")
+def broadcast(args):
+    return Transaction.broadcast(args["raw"])
