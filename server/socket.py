@@ -1,6 +1,7 @@
 from server.methods.transaction import Transaction
 from server.methods.general import General
 from server.methods.address import Address
+from .methods.token import Token
 from server import subscription
 from server import utils
 
@@ -41,6 +42,9 @@ def TransactionBatch(hashes=[]):
 
     return utils.response(result)
 
+def TokensList(offset=0, count=50, search=""):
+    return Token.list(offset, count, search)
+
 def init(sio):
     sio.on_event("connect", subscription.Connect)
     sio.on_event("subscribe.address", subscription.SubscribeAddress)
@@ -51,6 +55,7 @@ def init(sio):
 
     sio.on_event("general.info", GetInfo)
     sio.on_event("general.fee", EstimateFee)
+    sio.on_event("general.tokens", TokensList)
     sio.on_event("address.unspent", AddressUnspent)
     sio.on_event("address.balance", AddressBalance)
     sio.on_event("address.history", AddressHistory)
