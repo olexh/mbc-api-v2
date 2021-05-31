@@ -12,9 +12,14 @@ class Token():
 
         data = utils.make_request("listtokens", [f"{search}*", True, count, offset])
 
+        remove = []
+
         # ToDo: temporary solution, remove later
         for name in data["result"]:
             if name[0] == "@":
-                del data["result"][name]
+                remove.append(name)
+
+        for name in remove:
+            del data["result"][name]
 
         return data
