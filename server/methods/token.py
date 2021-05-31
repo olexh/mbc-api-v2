@@ -10,4 +10,11 @@ class Token():
         if count > 200:
             count = 200
 
-        return utils.make_request("listtokens", [f"{search}*", True, count, offset])
+        data = utils.make_request("listtokens", [f"{search}*", True, count, offset])
+
+        # ToDo: temporary solution, remove later
+        for name in data["result"]:
+            if name[0] == "@":
+                del data["result"][name]
+
+        return data
