@@ -52,10 +52,15 @@ class General():
 
     @classmethod
     def current_height(cls):
-        data = utils.make_request("getblockcount")
-        height = 0
+        # data = utils.make_request("getblockcount")
+        # height = 0
 
-        if data["error"] is None:
-            height = data["result"]
+        # if data["error"] is None:
+        #     height = data["result"]
 
-        return height
+        # return height
+
+        return utils.response({
+            "feerate": utils.satoshis(0.001),
+            "blocks": 6
+        })
