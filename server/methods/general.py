@@ -25,17 +25,22 @@ class General():
 
     @classmethod
     def fee(cls):
-        data = utils.make_request("estimatesmartfee", [6])
+        # data = utils.make_request("estimatesmartfee", [6])
 
-        if data["error"] is None:
-            data["result"]["feerate"] = utils.satoshis(data["result"]["feerate"])
-        else:
-            data = utils.response({
-                "feerate": utils.satoshis(0.001),
-                "blocks": 6
-            })
+        # if data["error"] is None:
+        #     data["result"]["feerate"] = utils.satoshis(data["result"]["feerate"])
+        # else:
+        #     data = utils.response({
+        #         "feerate": utils.satoshis(0.001),
+        #         "blocks": 6
+        #     })
 
-        return data
+        # return data
+
+        return utils.response({
+            "feerate": utils.satoshis(0.001),
+            "blocks": 6
+        })
 
     @classmethod
     def mempool(cls):
@@ -52,15 +57,10 @@ class General():
 
     @classmethod
     def current_height(cls):
-        # data = utils.make_request("getblockcount")
-        # height = 0
+        data = utils.make_request("getblockcount")
+        height = 0
 
-        # if data["error"] is None:
-        #     height = data["result"]
+        if data["error"] is None:
+            height = data["result"]
 
-        # return height
-
-        return utils.response({
-            "feerate": utils.satoshis(0.001),
-            "blocks": 6
-        })
+        return height
