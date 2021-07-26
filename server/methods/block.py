@@ -123,6 +123,10 @@ class Block():
     @cache.memoize(timeout=config.cache)
     def inputs(cls, bhash: str):
         data = cls.hash(bhash)
+
+        if data["error"]:
+            return data
+
         return Transaction().addresses(data["result"]["tx"])
 
     @classmethod
