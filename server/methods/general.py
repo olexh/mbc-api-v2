@@ -6,9 +6,7 @@ class General():
         data = utils.make_request("getblockchaininfo")
 
         if data["error"] is None:
-            mempool = cls.mempool()["result"]["size"]
-
-            data["result"]["mempool"] = mempool
+            data["result"]["mempool"] = 0
             data["result"]["reward"] = utils.reward(data["result"]["blocks"])
             data["result"].pop("verificationprogress")
             data["result"].pop("pruned")
@@ -16,6 +14,10 @@ class General():
             data["result"].pop("bip9_softforks")
             data["result"].pop("warnings")
             data["result"].pop("size_on_disk")
+
+            mempool = cls.mempool()
+            if mempool["error"] is None:
+                data["result"]["mempool"] = mempool["result"]["size"]
 
             nethash = utils.make_request("getnetworkhashps", [120, data["result"]["blocks"]])
             if nethash["error"] is None:
