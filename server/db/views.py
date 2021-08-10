@@ -178,16 +178,16 @@ def richlist(args, token):
 
     return utils.response(result)
 
-# @db.route("/chart", methods=["GET"])
-# @orm.db_session
-# def chart():
-#     data = BlockService.chart()
-#     result = {}
+@db.route("/chart", methods=["GET"])
+@orm.db_session
+def chart():
+    data = BlockService.chart()
+    result = {}
 
-#     for entry in data:
-#         result[entry[0]] = entry[1]
+    for entry in data:
+        result[entry[0]] = entry[1]
 
-#     return utils.response(result)
+    return utils.response(result)
 
 @db.route("/balance/<string:address>", methods=["GET"])
 @orm.db_session
