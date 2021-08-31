@@ -83,7 +83,7 @@ class Transaction(db.Entity):
         return {
             "confirmations": latest_blocks.height - self.block.height + 1,
             "fee": float(input_amount - output_amount),
-            "timestamp": self.created.timestamp(),
+            "timestamp": int(self.created.timestamp()),
             "amount": float(self.amount),
             "coinstake": self.coinstake,
             "height": self.block.height,
