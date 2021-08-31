@@ -18,7 +18,8 @@ def info(args):
     result = []
 
     for raw_address in args["addresses"]:
-        if (address := AddressService.get_by_address(raw_address)):
+        address = AddressService.get_by_address(raw_address)
+        if address:
             addresses.append(address)
 
     transactions = orm.select(
@@ -27,8 +28,10 @@ def info(args):
         orm.desc(Transaction.created)
     )
 
-    if args["before"] and (before := TransactionService.get_by_txid(args["before"])):
-        transactions = transactions.filter(lambda t: t.created < before.created)
+    if args["before"]:
+        before = TransactionService.get_by_txid(args["before"])
+        if before:
+            transactions = transactions.filter(lambda t: t.created < before.created)
 
     transactions = transactions.limit(args["count"])
 
