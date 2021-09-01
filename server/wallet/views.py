@@ -22,10 +22,10 @@ def info(args):
         if address:
             addresses.append(address)
 
-    transactions = orm.select(
-        t for t in Transaction if (a for a in t.addresses if a in addresses)
-    ).order_by(
-        orm.desc(Transaction.created)
+    transactions = orm.left_join(
+        transaction
+        for transaction in Transaction for address in transaction.addresses
+        if address in addresses
     )
 
     if args["before"]:
