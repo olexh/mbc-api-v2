@@ -26,6 +26,8 @@ def info(args):
         transaction
         for transaction in Transaction for address in transaction.addresses
         if address in addresses
+    ).order_by(
+        orm.desc(Transaction.created)
     )
 
     if args["before"]:
