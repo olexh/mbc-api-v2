@@ -30,6 +30,11 @@ def info(args):
         orm.desc(Transaction.created)
     )
 
+    if args["after"]:
+        after = TransactionService.get_by_txid(args["after"])
+        if after:
+            transactions = transactions.filter(lambda t: t.created > after.created)
+
     if args["before"]:
         before = TransactionService.get_by_txid(args["before"])
         if before:
