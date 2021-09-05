@@ -9,6 +9,16 @@ db = orm.Database(
     db=config.db["db"]
 )
 
+class Token(db.Entity):
+    _table_ = "chain_tokens"
+
+    amount = orm.Required(Decimal, precision=20, scale=8)
+    name = orm.Required(str, index=True)
+    reissuable = orm.Required(bool)
+    units = orm.Required(int)
+    type = orm.Required(int)
+
+
 class Block(db.Entity):
     _table_ = "chain_blocks"
 

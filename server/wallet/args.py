@@ -6,3 +6,7 @@ history_args = {
     "before": fields.Str(missing=None),
     "after": fields.Str(missing=None)
 }
+
+broadcast_args = {
+    "raw": fields.Str(required=True)
+}

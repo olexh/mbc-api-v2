@@ -11,6 +11,10 @@ from datetime import datetime
 from pony import orm
 from . import utils
 
+from .utils import make_request
+from .models import Token
+from . import constants
+
 def log_block(message, block, tx=[]):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     time = block.created.strftime("%Y-%m-%d %H:%M:%S")
@@ -19,6 +23,50 @@ def log_block(message, block, tx=[]):
 def log_message(message):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"{now} {message}")
+
+def token_type(name):
+    if "#" in name:
+        return constants.UNIQUE
+    if "/" in name:
+        return constants.SUB
+    if name[0] == "@":
+        return constants.USERNAME
+    if name[0] == "!":
+        return constants.OWNER
+    return constants.ROOT
+
+@orm.db_session
+def sync_tokens():
+    log_message("Updating tokens list")
+
+    tokens = make_request("listtokens", ["", True])
+
+    if not tokens["error"]:
+        for name in tokens["result"]:
+            data = tokens["result"][name]
+            token = Token.get(name=name)
+            type = token_type(name)
+
+            if not token:
+                log_message(f"Added {name} to db")
+                token = Token(
+                    name=name, amount=data["amount"],
+                    units=data["units"], type=type,
+                    reissuable=data["reissuable"]
+                )
+
+            else:
+                if token.amount != data["amount"]:
+                    log_message(f"Updated amount for {name}")
+                    token.amount = data["amount"]
+
+                if token.units != data["units"]:
+                    log_message(f"Updated units for {name}")
+                    token.units = data["units"]
+
+                if token.reissuable != data["reissuable"]:
+                    log_message(f"Updated reissuable for {name}")
+                    token.reissuable = data["reissuable"]
 
 @orm.db_session
 def sync_blocks():
