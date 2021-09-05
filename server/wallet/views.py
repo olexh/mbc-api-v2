@@ -1,6 +1,6 @@
 from ..methods.transaction import Transaction as NodeTransaction
 from ..models import Transaction, Block, Token
-from .args import history_args, broadcast_args
+from . import args
 from ..services import TransactionService
 from webargs.flaskparser import use_args
 from ..services import AddressService
@@ -104,9 +104,9 @@ def test(address):
     return utils.response(result)
 
 @wallet.route("/history", methods=["POST"])
-@use_args(history_args, location="json")
+@use_args(args.history_args, location="json")
 @orm.db_session
-def info(args):
+def history(args):
     transactions = None
     addresses = []
     result = []
@@ -141,7 +141,20 @@ def info(args):
 
     return utils.response(result)
 
+@wallet.route("/check", methods=["POST"])
+@use_args(args.addresses_args, location="json")
+@orm.db_session
+def check(args):
+    result = []
+
+    for raw_address in args["addresses"]:
+        address = AddressService.get_by_address(raw_address)
+        if address and len(address.transactions) > 0:
+            result.append(raw_address)
+
+    return utils.response(result)
+
 @wallet.route("/broadcast", methods=["POST"])
-@use_args(broadcast_args, location="json")
+@use_args(args.broadcast_args, location="json")
 def broadcast(args):
     return NodeTransaction.broadcast(args["raw"])

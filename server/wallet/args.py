@@ -7,6 +7,10 @@ history_args = {
     "after": fields.Str(missing=None)
 }
 
+addresses_args = {
+    "addresses": fields.List(fields.Str, missing=[], validate=validate.Length(min=1, max=500))
+}
+
 broadcast_args = {
     "raw": fields.Str(required=True)
 }
