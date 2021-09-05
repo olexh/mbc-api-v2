@@ -243,4 +243,4 @@ def token_data(name):
 @db.route("/broadcast", methods=["POST"])
 @use_args(broadcast_args, location="json")
 def broadcast(args):
-    return Transaction.broadcast(args["raw"])
+    return NodeTransaction.broadcast(args["raw"])

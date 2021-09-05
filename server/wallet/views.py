@@ -1,3 +1,4 @@
+from ..methods.transaction import Transaction as NodeTransaction
 from ..models import Transaction, Block, Token
 from .args import history_args, broadcast_args
 from ..services import TransactionService
@@ -143,4 +144,4 @@ def info(args):
 @wallet.route("/broadcast", methods=["POST"])
 @use_args(broadcast_args, location="json")
 def broadcast(args):
-    return Transaction.broadcast(args["raw"])
+    return NodeTransaction.broadcast(args["raw"])
