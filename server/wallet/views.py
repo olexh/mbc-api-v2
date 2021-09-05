@@ -112,9 +112,10 @@ def history(args):
     result = []
 
     for raw_address in args["addresses"]:
-        address = AddressService.get_by_address(raw_address)
-        if address:
-            addresses.append(address)
+        if raw_address:
+            address = AddressService.get_by_address(raw_address)
+            if address:
+                addresses.append(address)
 
     transactions = orm.left_join(
         transaction
@@ -148,9 +149,10 @@ def check(args):
     result = []
 
     for raw_address in args["addresses"]:
-        address = AddressService.get_by_address(raw_address)
-        if address and len(address.transactions) > 0:
-            result.append(raw_address)
+        if raw_address:
+            address = AddressService.get_by_address(raw_address)
+            if address:
+                result.append(raw_address)
 
     return utils.response(result)
 
