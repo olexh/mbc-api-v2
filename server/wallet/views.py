@@ -13,8 +13,8 @@ import math
 
 wallet = Blueprint("wallet", __name__, url_prefix="/wallet/")
 
-def satoshis(value, decimal=8):
-    return int(float(value) * math.pow(10, decimal))
+def satoshis(value):
+    return int(float(value) * math.pow(10, 8))
 
 def get_units(name):
     token = Token.get(name=name)
@@ -40,7 +40,7 @@ def display_tx(transaction):
         inputs.append({
             "address": vin.vout.address.address,
             "currency": vin.vout.currency,
-            "amount": satoshis(vin.vout.amount, units),
+            "amount": satoshis(vin.vout.amount),
             "units": units
         })
 
@@ -55,7 +55,7 @@ def display_tx(transaction):
             "currency": vout.currency,
             "timelock": vout.timelock,
             "category": vout.category,
-            "amount": satoshis(vout.amount, units),
+            "amount": satoshis(vout.amount),
             "units": units,
         })
 
@@ -96,8 +96,8 @@ def test(address):
 
             result.append({
                 "currency": balance.currency,
-                "balance": satoshis(unspent, units),
-                "locked": satoshis(locked, units),
+                "balance": satoshis(unspent),
+                "locked": satoshis(locked),
                 "units": units
             })
 
