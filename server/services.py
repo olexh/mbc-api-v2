@@ -4,6 +4,7 @@ from .models import Balance
 from .models import Output
 from .models import Input
 from .models import Block
+from .models import Token
 from pony import orm
 
 class BlockService(object):
@@ -131,3 +132,13 @@ class OutputService(object):
         return orm.select(
             sum(o.amount) for o in Output if o.spent is False and o.address == address and o.currency == currency and o.timelock > 500000000 and o.timelock > time
         ).first()
+
+class TokenService(object):
+    @classmethod
+    def get_units(cls, currency):
+        token = Token.get(name=currency)
+
+        if not token or currency == "AOK":
+            return 8
+
+        return token.units

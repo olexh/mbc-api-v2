@@ -1,28 +1,18 @@
 from ..methods.transaction import Transaction as NodeTransaction
-from ..models import Transaction, Block, Token
-from . import args
+from ..models import Transaction, Block
 from ..services import TransactionService
 from webargs.flaskparser import use_args
 from ..services import AddressService
 from ..services import OutputService
 from ..services import BlockService
+from ..services import TokenService
 from flask import Blueprint
+from ..tools import display
 from .. import utils
 from pony import orm
-import math
+from . import args
 
 wallet = Blueprint("wallet", __name__, url_prefix="/wallet/")
-
-def satoshis(value):
-    return int(float(value) * math.pow(10, 8))
-
-def get_units(name):
-    token = Token.get(name=name)
-
-    if not token or name == "AOK":
-        return 8
-
-    return token.units
 
 def display_tx(transaction):
     latest_blocks = Block.select().order_by(
@@ -35,38 +25,38 @@ def display_tx(transaction):
     inputs = []
 
     for vin in transaction.inputs:
-        units = get_units(vin.vout.currency)
+        units = TokenService.get_units(vin.vout.currency)
 
         inputs.append({
             "address": vin.vout.address.address,
             "currency": vin.vout.currency,
-            "amount": satoshis(vin.vout.amount),
+            "amount": utils.satoshis(vin.vout.amount),
             "units": units
         })
 
         if vin.vout.currency == "AOK":
-            input_amount += satoshis(vin.vout.amount)
+            input_amount += utils.satoshis(vin.vout.amount)
 
     for vout in transaction.outputs:
-        units = get_units(vout.currency)
+        units = TokenService.get_units(vout.currency)
 
         outputs.append({
             "address": vout.address.address,
             "currency": vout.currency,
             "timelock": vout.timelock,
             "category": vout.category,
-            "amount": satoshis(vout.amount),
+            "amount": utils.satoshis(vout.amount),
             "units": units,
         })
 
         if vout.currency == "AOK":
-            output_amount += satoshis(vout.amount)
+            output_amount += utils.satoshis(vout.amount)
 
     return {
         "confirmations": latest_blocks.height - transaction.block.height + 1,
         "fee": input_amount - output_amount,
         "timestamp": int(transaction.created.timestamp()),
-        "amount": satoshis(transaction.amount),
+        "amount": utils.satoshis(transaction.amount),
         "coinstake": transaction.coinstake,
         "height": transaction.block.height,
         "coinbase": transaction.coinbase,
@@ -92,12 +82,12 @@ def test(address):
 
             locked = locked_time + locked_height
             unspent = balance.balance - locked
-            units = get_units(balance.currency)
+            units = TokenService.get_units(balance.currency)
 
             result.append({
                 "currency": balance.currency,
-                "balance": satoshis(unspent),
-                "locked": satoshis(locked),
+                "balance": utils.satoshis(unspent),
+                "locked": utils.satoshis(locked),
                 "units": units
             })
 
@@ -141,6 +131,21 @@ def history(args):
         result.append(display_tx(transaction))
 
     return utils.response(result)
+
+@wallet.route("/transaction/<string:txid>", methods=["GET"])
+@orm.db_session
+def transaction(txid):
+    transaction = TransactionService.get_by_txid(txid)
+
+    if transaction:
+        return utils.response(display_tx(transaction))
+
+    data = NodeTransaction.info(txid)
+    if not data["error"]:
+        result = display.tx_to_wallet(data)
+        return utils.response(result)
+
+    return utils.dead_response("Transaction not found"), 404
 
 @wallet.route("/check", methods=["POST"])
 @use_args(args.addresses_args, location="json")
