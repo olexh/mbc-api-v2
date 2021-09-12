@@ -47,6 +47,7 @@ def display_tx(transaction):
             "category": vout.category,
             "amount": utils.satoshis(vout.amount),
             "units": units,
+            "spent": vout.spent
         })
 
         if vout.currency == "AOK":

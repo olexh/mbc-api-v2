@@ -84,7 +84,8 @@ class Transaction(db.Entity):
                 "currency": vout.currency,
                 "timelock": vout.timelock,
                 "amount": float(vout.amount),
-                "category": vout.category
+                "category": vout.category,
+                "spent": vout.spent
             })
 
             if vout.currency == "AOK":

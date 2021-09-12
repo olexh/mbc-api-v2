@@ -68,7 +68,8 @@ def tx_to_db(data):
             "currency": currency,
             "timelock": timelock,
             "amount": amount,
-            "category": category
+            "category": category,
+            "spent": False
         })
 
         if currency == "AOK":
@@ -150,6 +151,7 @@ def tx_to_wallet(data):
             "amount": amount,
             "category": category,
             "units": units,
+            "spent": False
         })
 
         if currency == "AOK":
