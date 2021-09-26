@@ -26,6 +26,27 @@ def reward(height):
 
     return int(satoshis(4) // (2 ** halvings))
 
+def supply(height):
+    reward = satoshis(4)
+    halvings = 525960
+    halvings_count = 0
+    supply = reward
+    
+    while height > halvings:
+        total = halvings * reward
+        reward = reward / 2
+        height = height - halvings
+        halvings_count += 1
+
+        supply += total
+
+    supply = supply + height * reward
+
+    return {
+        "halvings": int(halvings_count),
+        "supply": int(supply)
+    }
+
 def satoshis(value):
     return int(float(value) * math.pow(10, 8))
 
