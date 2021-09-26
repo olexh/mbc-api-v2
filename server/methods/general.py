@@ -24,6 +24,15 @@ class General():
                 data["result"]["nethash"] = int(nethash["result"])
 
         return data
+    
+    @classmethod
+    def supply(cls):
+        data = utils.make_request("getblockchaininfo")
+        height = data["result"]["blocks"]
+        result = utils.supply(height)
+        result["height"] = height
+
+        return result
 
     @classmethod
     def fee(cls):
