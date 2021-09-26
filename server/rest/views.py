@@ -94,7 +94,7 @@ def fee():
 
 @rest.route("/supply", methods=["GET"])
 def supply():
-    return General.supply()
+    return utils.response(General.supply())
 
 @rest.route("/broadcast", methods=["POST"])
 @use_args(broadcast_args, location="form")
