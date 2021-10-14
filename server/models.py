@@ -80,6 +80,7 @@ class Transaction(db.Entity):
 
         for vout in self.outputs:
             outputs.append({
+                "vin": vout.vin.transaction.txid if vout.vin else None,
                 "address": vout.address.address,
                 "currency": vout.currency,
                 "timelock": vout.timelock,

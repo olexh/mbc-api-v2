@@ -31,7 +31,7 @@ def supply(height):
     halvings = 525960
     halvings_count = 0
     supply = reward
-    
+
     while height > halvings:
         total = halvings * reward
         reward = reward / 2
