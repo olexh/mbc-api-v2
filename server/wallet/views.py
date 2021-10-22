@@ -200,4 +200,15 @@ def broadcast(args):
 @wallet.route("/decode", methods=["POST"])
 @use_args(args.broadcast_args, location="json")
 def decode(args):
-    return NodeTransaction.decode(args["raw"])
+    data = NodeTransaction.decode(args["raw"])
+
+    if data["error"] is None:
+        for index, vin in enumerate(data["result"]["vin"]):
+            if "txid" in vin:
+                vin_data = utils.make_request("getrawtransaction", [vin["txid"], True])
+
+                if vin_data["error"] is None:
+                    data["result"]["vin"][index]["scriptPubKey"] = vin_data["result"]["vout"][vin["vout"]]["scriptPubKey"]
+                    data["result"]["vin"][index]["value"] = utils.satoshis(vin_data["result"]["vout"][vin["vout"]]["value"])
+
+    return data
