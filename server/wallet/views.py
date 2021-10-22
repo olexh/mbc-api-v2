@@ -166,3 +166,31 @@ def check(args):
 @use_args(args.broadcast_args, location="json")
 def broadcast(args):
     return NodeTransaction.broadcast(args["raw"])
+
+@wallet.route("/utxo", methods=["POST"])
+@use_args(args.utxo_args, location="json")
+@orm.db_session
+def utxo(args):
+    result = []
+
+    for output in args["outputs"]:
+        if "index" not in output or "txid" not in output:
+            continue
+
+        if not (transaction := TransactionService.get_by_txid(output["txid"])):
+            continue
+
+        if not (vout := OutputService.get_by_prev(transaction, output["index"])):
+            pass
+
+        result.append({
+            "units": TokenService.get_units(vout.currency),
+            "amount": utils.satoshis(vout.amount),
+            "address": vout.address.address,
+            "currency": vout.currency,
+            "timelock": vout.timelock,
+            "category": vout.category,
+            "spent": vout.spent
+        })
+
+    return utils.response(result)

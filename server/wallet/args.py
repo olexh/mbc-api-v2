@@ -14,3 +14,7 @@ addresses_args = {
 broadcast_args = {
     "raw": fields.Str(required=True)
 }
+
+utxo_args = {
+    "outputs": fields.List(fields.Dict, missing=[])
+}
