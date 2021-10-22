@@ -197,7 +197,7 @@ def utxo(args):
 def broadcast(args):
     return NodeTransaction.broadcast(args["raw"])
 
-@wallet.route("/decode", methods=["GET"])
+@wallet.route("/decode", methods=["POST"])
 @use_args(args.broadcast_args, location="json")
 def decode(args):
     return NodeTransaction.decode(args["raw"])
