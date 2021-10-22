@@ -208,7 +208,16 @@ def decode(args):
                 vin_data = utils.make_request("getrawtransaction", [vin["txid"], True])
 
                 if vin_data["error"] is None:
-                    data["result"]["vin"][index]["scriptPubKey"] = vin_data["result"]["vout"][vin["vout"]]["scriptPubKey"]
-                    data["result"]["vin"][index]["value"] = utils.satoshis(vin_data["result"]["vout"][vin["vout"]]["value"])
+                    script = vin_data["result"]["vout"][vin["vout"]]["scriptPubKey"]
+                    value = utils.satoshis(vin_data["result"]["vout"][vin["vout"]]["value"])
+
+                    if "token" in script:
+                        script["token"]["amount"] = utils.satoshis(script["token"]["amount"])
+
+                    data["result"]["vin"][index]["scriptPubKey"] = script
+                    data["result"]["vin"][index]["value"] = value
+
+        for index, vout in enumerate(data["result"]["vout"]):
+            data["result"]["vout"][index]["value"] = utils.satoshis(vout["value"])
 
     return data
