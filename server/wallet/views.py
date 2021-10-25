@@ -217,6 +217,8 @@ def decode(args):
                     )
 
                     if "token" in script:
+                        script["token"]["decimal"] = script["token"]["amount"]
+
                         script["token"]["amount"] = utils.satoshis(
                             script["token"]["amount"]
                         )
@@ -232,6 +234,8 @@ def decode(args):
             script = vout["scriptPubKey"]
 
             if "token" in script:
+                script["token"]["decimal"] = script["token"]["amount"]
+
                 script["token"]["amount"] = utils.satoshis(
                     script["token"]["amount"]
                 )
