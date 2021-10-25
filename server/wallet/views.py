@@ -229,4 +229,13 @@ def decode(args):
                 vout["value"]
             )
 
+            script = vout["scriptPubKey"]
+
+            if "token" in script:
+                script["token"]["amount"] = utils.satoshis(
+                    script["token"]["amount"]
+                )
+
+            data["result"]["vout"][index]["scriptPubKey"] = script
+
     return data
