@@ -181,13 +181,15 @@ def utxo(args):
             continue
 
         result.append({
+            "txid": transaction.txid,
             "units": TokenService.get_units(vout.currency),
             "amount": utils.satoshis(vout.amount),
             "address": vout.address.address,
             "currency": vout.currency,
             "timelock": vout.timelock,
             "category": vout.category,
-            "spent": vout.spent
+            "spent": vout.spent,
+            "index": vout.n
         })
 
     return utils.response(result)
