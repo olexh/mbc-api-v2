@@ -204,6 +204,9 @@ def test(address):
             locked = locked_time + locked_height
             unspent = balance.balance - locked
 
+            if balance.balance == 0:
+                continue
+
             result.append({
                 "currency": balance.currency,
                 "balance": float(unspent),

@@ -85,6 +85,9 @@ def test(address):
             unspent = balance.balance - locked
             units = TokenService.get_units(balance.currency)
 
+            if balance.balance == 0:
+                continue
+
             result.append({
                 "currency": balance.currency,
                 "balance": utils.satoshis(unspent),
