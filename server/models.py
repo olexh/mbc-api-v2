@@ -72,11 +72,15 @@ class Transaction(db.Entity):
             inputs.append({
                 "address": vin.vout.address.address,
                 "currency": vin.vout.currency,
-                "amount": float(vin.vout.amount)
+                "amount": float(vin.vout.amount),
+                "id": vin.id,
             })
 
             if vin.vout.currency == "AOK":
                 input_amount += vin.vout.amount
+
+        inputs = sorted(inputs, key=lambda d: d["id"])
+        inputs = [{key: val for key, val in sub.items() if key != "id"} for sub in inputs]
 
         for vout in self.outputs:
             outputs.append({
@@ -86,11 +90,14 @@ class Transaction(db.Entity):
                 "timelock": vout.timelock,
                 "amount": float(vout.amount),
                 "category": vout.category,
-                "spent": vout.spent
+                "spent": vout.spent,
+                "index": vout.n
             })
 
             if vout.currency == "AOK":
                 output_amount += vout.amount
+
+        outputs = sorted(outputs, key=lambda d: d["index"])
 
         return {
             "confirmations": latest_blocks.height - self.block.height + 1,
