@@ -7,6 +7,7 @@ from ..methods.address import Address
 from ..methods.token import Token
 from ..methods.block import Block
 from .args import token_list_args
+from .args import verify_args
 from flask import Blueprint
 from .. import utils
 
@@ -105,3 +106,10 @@ def broadcast(args):
 @use_args(token_list_args, location="query")
 def tokens_list(args):
     return Token.list(args["offset"], args["count"], args["search"])
+
+@rest.route("/verify", methods=["POST"])
+@use_args(verify_args, location="json")
+def verify_message(args):
+    return utils.make_request("verifymessage", [
+        args["address"], args["signature"], args["message"]
+    ])

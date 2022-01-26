@@ -18,7 +18,6 @@ class Token(db.Entity):
     units = orm.Required(int)
     type = orm.Required(int)
 
-
 class Block(db.Entity):
     _table_ = "chain_blocks"
 

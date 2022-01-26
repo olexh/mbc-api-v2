@@ -22,3 +22,9 @@ unspent_args = {
 broadcast_args = {
     "raw": fields.Str(required=True)
 }
+
+verify_args = {
+    "address": fields.Str(required=True),
+    "signature": fields.Str(required=True),
+    "message": fields.Str(required=True)
+}
