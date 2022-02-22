@@ -27,10 +27,11 @@ def reward(height):
     return int(satoshis(4) // (2 ** halvings))
 
 def supply(height):
+    premine = satoshis(2100000000)
     reward = satoshis(4)
     halvings = 525960
     halvings_count = 0
-    supply = reward
+    supply = premine + reward
 
     while height > halvings:
         total = halvings * reward
@@ -39,6 +40,10 @@ def supply(height):
         halvings_count += 1
 
         supply += total
+
+        if halvings > 10:
+            reward = 0
+            break
 
     supply = supply + height * reward
 
