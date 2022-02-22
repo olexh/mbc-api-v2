@@ -4,11 +4,11 @@ from .args import offset_args, range_args
 from webargs.flaskparser import use_args
 from ..methods.general import General
 from ..methods.address import Address
+from flask import Blueprint, Response
 from ..methods.token import Token
 from ..methods.block import Block
 from .args import token_list_args
 from .args import verify_args
-from flask import Blueprint
 from .. import utils
 
 rest = Blueprint("rest", __name__)
@@ -113,3 +113,12 @@ def verify_message(args):
     return utils.make_request("verifymessage", [
         args["address"], args["signature"], args["message"]
     ])
+
+@rest.route("/plain/supply", methods=["GET"])
+def plain_supply():
+    data = utils.make_request("getblockchaininfo")
+    height = data["result"]["blocks"]
+
+    return Response(utils.amount(
+        utils.supply(height)["supply"]
+    ), mimetype="text/plain")

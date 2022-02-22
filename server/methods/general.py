@@ -24,7 +24,7 @@ class General():
                 data["result"]["nethash"] = int(nethash["result"])
 
         return data
-    
+
     @classmethod
     def supply(cls):
         data = utils.make_request("getblockchaininfo")
