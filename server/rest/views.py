@@ -118,7 +118,8 @@ def verify_message(args):
 def plain_supply():
     data = utils.make_request("getblockchaininfo")
     height = data["result"]["blocks"]
-
-    return Response(str(utils.amount(
+    supply = int(utils.amount(
         utils.supply(height)["supply"]
-    )), mimetype="text/plain")
+    ))
+
+    return Response(str(supply), mimetype="text/plain")
