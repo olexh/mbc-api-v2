@@ -119,6 +119,6 @@ def plain_supply():
     data = utils.make_request("getblockchaininfo")
     height = data["result"]["blocks"]
 
-    return Response(utils.amount(
+    return Response(str(utils.amount(
         utils.supply(height)["supply"]
-    ), mimetype="text/plain")
+    )), mimetype="text/plain")
