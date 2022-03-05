@@ -27,6 +27,10 @@ class BlockService(object):
         )
 
     @classmethod
+    def get_by_height(cls, height):
+        return Block.get(height=height)
+
+    @classmethod
     def get_by_hash(cls, bhash):
         return Block.get(blockhash=bhash)
 

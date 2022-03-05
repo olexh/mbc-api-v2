@@ -69,6 +69,32 @@ def blocks(args):
 
     return utils.response(result)
 
+@db.route("/height/<int:height>", methods=["GET"])
+@orm.db_session
+def height(height):
+    block = BlockService.get_by_height(height)
+
+    if block:
+        return utils.response({
+            "reward": float(block.reward),
+            "signature": block.signature,
+            "blockhash": block.blockhash,
+            "height": block.height,
+            "tx": len(block.transactions),
+            "timestamp": block.created.timestamp(),
+            "difficulty": block.difficulty,
+            "merkleroot": block.merkleroot,
+            "chainwork": block.chainwork,
+            "version": block.version,
+            "weight": block.weight,
+            "stake": block.stake,
+            "nonce": block.nonce,
+            "size": block.size,
+            "bits": block.bits
+        })
+
+    return utils.dead_response("Block not found"), 404
+
 @db.route("/block/<string:bhash>", methods=["GET"])
 @orm.db_session
 def block(bhash):
