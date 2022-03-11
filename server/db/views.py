@@ -8,9 +8,11 @@ from ..services import OutputService
 from ..services import BlockService
 from ..models import Transaction
 from .args import broadcast_args
+from .args import tokens_args
 from .args import page_args
 from flask import Blueprint
 from ..tools import display
+from ..models import Token
 from .. import utils
 from pony import orm
 
@@ -273,3 +275,30 @@ def token_data(name):
 @use_args(broadcast_args, location="json")
 def broadcast(args):
     return NodeTransaction.broadcast(args["raw"])
+
+@db.route("/tokens", methods=["GET"])
+@use_args(tokens_args, location="query")
+@orm.db_session
+def tokens(args):
+    tokens = Token.select(lambda t: t.category in ["unique", "sub", "root"])
+
+    if args["search"]:
+        tokens = tokens.filter(lambda t: t.name.startswith(args["search"]))
+
+    tokens = tokens.page(args["page"], 100)
+
+    result = []
+
+    for token in tokens:
+        result.append({
+            "amount": float(token.amount),
+            "reissuable": token.reissuable,
+            "category": token.category,
+            "height": token.height,
+            "block": token.block,
+            "units": token.units,
+            "name": token.name,
+            "ipfs": token.ipfs
+        })
+
+    return utils.response(result)

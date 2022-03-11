@@ -7,3 +7,8 @@ page_args = {
 broadcast_args = {
     "raw": fields.Str(required=True)
 }
+
+tokens_args = {
+    "page": fields.Int(missing=1, validate=validate.Range(min=1)),
+    "search": fields.Str(missing=None)
+}

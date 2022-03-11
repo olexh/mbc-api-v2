@@ -13,7 +13,6 @@ from . import utils
 
 from .utils import make_request
 from .models import Token
-from . import constants
 
 def log_block(message, block, tx=[]):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -24,16 +23,16 @@ def log_message(message):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"{now} {message}")
 
-def token_type(name):
+def token_category(name):
     if "#" in name:
-        return constants.UNIQUE
+        return "unique"
     if "/" in name:
-        return constants.SUB
+        return "sub"
     if name[0] == "@":
-        return constants.USERNAME
+        return "username"
     if name[0] == "!":
-        return constants.OWNER
-    return constants.ROOT
+        return "owner"
+    return "root"
 
 @orm.db_session
 def sync_tokens():
@@ -45,15 +44,20 @@ def sync_tokens():
         for name in tokens["result"]:
             data = tokens["result"][name]
             token = Token.get(name=name)
-            type = token_type(name)
+            ipfs = data["ipfs_hash"] if data["has_ipfs"] == 1 else None
 
             if not token:
                 log_message(f"Added {name} to db")
-                token = Token(
-                    name=name, amount=data["amount"],
-                    units=data["units"], type=type,
-                    reissuable=data["reissuable"]
-                )
+                token = Token(**{
+                    "amount": data["amount"],
+                    "reissuable": data["reissuable"],
+                    "category": token_category(name),
+                    "height": data["block_height"],
+                    "block": data["blockhash"],
+                    "units": data["units"],
+                    "name": name,
+                    "ipfs": ipfs
+                })
 
             else:
                 if token.amount != data["amount"]:
@@ -67,6 +71,8 @@ def sync_tokens():
                 if token.reissuable != data["reissuable"]:
                     log_message(f"Updated reissuable for {name}")
                     token.reissuable = data["reissuable"]
+
+                # ToDo: Update IPFS (?)
 
 @orm.db_session
 def sync_blocks():
