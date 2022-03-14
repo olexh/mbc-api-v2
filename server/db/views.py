@@ -272,6 +272,7 @@ def token_data(name):
         ).count(distinct=False)
 
         return utils.response({
+            "logo": f"https://source.boringavatars.com/bauhaus/120/{name}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51",
             "amount": float(token.amount),
             "reissuable": token.reissuable,
             "category": token.category,
