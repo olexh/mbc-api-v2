@@ -9,6 +9,7 @@ from ..services import BlockService
 from ..models import Transaction
 from .args import broadcast_args
 from .args import tokens_args
+from ..models import Balance
 from .args import page_args
 from flask import Blueprint
 from ..tools import display
@@ -263,11 +264,24 @@ def mempool():
 @db.route("/token/<string:name>", methods=["GET"])
 @orm.db_session
 def token_data(name):
-    data = TokenGeneral.data(name)
+    token = Token.get(name=name)
 
-    if data["result"]:
-        result = display.token_to_db(data)
-        return utils.response(result)
+    if token:
+        holders = Balance.select(
+            lambda b: b.balance > 0 and b.currency == name
+        ).count(distinct=False)
+
+        return utils.response({
+            "amount": float(token.amount),
+            "reissuable": token.reissuable,
+            "category": token.category,
+            "height": token.height,
+            "block": token.block,
+            "units": token.units,
+            "name": token.name,
+            "ipfs": token.ipfs,
+            "holders": holders
+        })
 
     return utils.dead_response("Token not found"), 404
 
@@ -290,15 +304,6 @@ def tokens(args):
     result = []
 
     for token in tokens:
-        result.append({
-            "amount": float(token.amount),
-            "reissuable": token.reissuable,
-            "category": token.category,
-            "height": token.height,
-            "block": token.block,
-            "units": token.units,
-            "name": token.name,
-            "ipfs": token.ipfs
-        })
+        result.append(token.display)
 
     return utils.response(result)

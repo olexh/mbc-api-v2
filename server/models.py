@@ -21,6 +21,24 @@ class Token(db.Entity):
     units = orm.Required(int)
     block = orm.Required(str)
 
+    @property
+    def display(self):
+        # holders = Balance.select(
+        #     lambda b: b.balance > 0 and b.currency == self.name
+        # ).count(distinct=False)
+
+        return {
+            "amount": float(self.amount),
+            "reissuable": self.reissuable,
+            "category": self.category,
+            "height": self.height,
+            "block": self.block,
+            "units": self.units,
+            "name": self.name,
+            "ipfs": self.ipfs
+            # "holders": holders
+        }
+
 class Block(db.Entity):
     _table_ = "chain_blocks"
 
