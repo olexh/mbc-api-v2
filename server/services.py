@@ -85,16 +85,6 @@ class AddressService(object):
         return Address.get(address=address)
 
     @classmethod
-    def richlist(cls, page, pagesize, currency):
-        query = orm.select(
-            (b.address, b.balance) for b in Balance if b.currency == currency
-        )
-
-        query = query.order_by(-2)
-
-        return query.page(page, pagesize=pagesize)
-
-    @classmethod
     def create(cls, address):
         return Address(address=address)
 

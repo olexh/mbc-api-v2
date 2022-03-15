@@ -16,6 +16,8 @@ from ..models import Token
 from .. import utils
 from pony import orm
 
+from decimal import Decimal
+
 db = Blueprint("db", __name__, url_prefix="/v2/")
 
 @db.route("/latest", methods=["GET"])
@@ -192,18 +194,34 @@ def count(address):
         "tokens": tokens
     })
 
-@db.route("/richlist", defaults={"token": "AOK"}, methods=["GET"])
-@db.route("/richlist/<string:token>", methods=["GET"])
+@db.route("/richlist", defaults={"name": "AOK"}, methods=["GET"])
+@db.route("/richlist/<string:name>", methods=["GET"])
 @use_args(page_args, location="query")
 @orm.db_session
-def richlist(args, token):
-    addresses = AddressService.richlist(args["page"], args["size"], token)
+def richlist(args, name):
+    balances = Balance.select(
+        lambda b: b.currency == name and b.balance > 0
+    ).order_by(
+        orm.desc(Balance.balance)
+    ).page(args["page"], pagesize=args["size"])
+
+    block = BlockService.latest_block()
+    supply = 0
+
+    if name == "AOK":
+        supply = Decimal(utils.amount(utils.supply(block.height)["supply"]))
+
+    else:
+        if (token := Token.get(name=name)):
+            supply = token.amount
+
     result = []
 
-    for entry in addresses:
+    for balance in balances:
         result.append({
-            "address": entry[0].address,
-            "balance": float(entry[1])
+            "address": balance.address.address,
+            "balance": float(balance.balance),
+            "percentage": round(float((balance.balance / supply) * 100), 2)
         })
 
     return utils.response(result)
