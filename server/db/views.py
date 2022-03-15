@@ -283,6 +283,26 @@ def address(address):
 
     return utils.response(result)
 
+@db.route("/address/<string:address>/transactions", methods=["GET"])
+@use_args(page_args, location="query")
+@orm.db_session
+def address_transactions(args, address):
+    address = AddressService.get_by_address(address)
+
+    if address:
+        result = []
+
+        transactions = address.transactions.order_by(
+            orm.desc(Transaction.created)
+        ).page(args["page"], pagesize=args["size"])
+
+        for transaction in transactions:
+            result.append(transaction.display())
+
+        return utils.response(result)
+
+    return utils.dead_response("Block not found"), 404
+
 @db.route("/mempool", methods=["GET"])
 @orm.db_session
 def mempool():
