@@ -38,7 +38,7 @@ class BlockService(object):
     def blocks(cls, page=1):
         return Block.select().order_by(
             orm.desc(Block.height)
-        ).page(page, pagesize=100)
+        ).page(page, pagesize=10)
 
     @classmethod
     def chart(cls):
@@ -64,7 +64,7 @@ class TransactionService(object):
     def transactions(cls, page=1, currency="AOK"):
         query = orm.select((o.transaction, sum(o.amount), o.transaction.id) for o in Output if o.currency == currency).distinct()
         query = query.order_by(-3)
-        return query.page(page, pagesize=100)
+        return query.page(page, pagesize=10)
 
     @classmethod
     def total_transactions(cls, currency="AOK"):
@@ -92,7 +92,7 @@ class AddressService(object):
 
         query = query.order_by(-2)
 
-        return query.page(page, pagesize=100)
+        return query.page(page, pagesize=10)
 
     @classmethod
     def create(cls, address):

@@ -131,7 +131,7 @@ def block_transactions(args, bhash):
     block = BlockService.get_by_hash(bhash)
 
     if block:
-        transactions = block.transactions.page(args["page"])
+        transactions = block.transactions.page(args["page"], pagesize=10)
         result = []
 
         for transaction in transactions:
@@ -166,7 +166,7 @@ def history(args, address):
     if address:
         transactions = address.transactions.order_by(
             orm.desc(Transaction.id)
-        ).page(args["page"], pagesize=100)
+        ).page(args["page"], pagesize=10)
 
         for transaction in transactions:
             result.append(transaction.display())

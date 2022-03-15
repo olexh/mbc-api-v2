@@ -3,11 +3,13 @@ from decimal import Decimal
 from pony import orm
 import config
 
-db = orm.Database(
-    provider="mysql", host=config.db["host"],
-    user=config.db["user"], passwd=config.db["password"],
-    db=config.db["db"]
-)
+# db = orm.Database(
+#     provider="mysql", host=config.db["host"],
+#     user=config.db["user"], passwd=config.db["password"],
+#     db=config.db["db"]
+# )
+
+db = orm.Database(**config.db_params)
 
 class Token(db.Entity):
     _table_ = "chain_tokens"
