@@ -35,10 +35,10 @@ class BlockService(object):
         return Block.get(blockhash=bhash)
 
     @classmethod
-    def blocks(cls, page=1):
+    def blocks(cls, page=1, pagesize=10):
         return Block.select().order_by(
             orm.desc(Block.height)
-        ).page(page, pagesize=10)
+        ).page(page, pagesize=pagesize)
 
     @classmethod
     def chart(cls):
@@ -61,10 +61,10 @@ class TransactionService(object):
         )
 
     @classmethod
-    def transactions(cls, page=1, currency="AOK"):
+    def transactions(cls, page=1, pagesize=10, currency="AOK"):
         query = orm.select((o.transaction, sum(o.amount), o.transaction.id) for o in Output if o.currency == currency).distinct()
         query = query.order_by(-3)
-        return query.page(page, pagesize=10)
+        return query.page(page, pagesize=pagesize)
 
     @classmethod
     def total_transactions(cls, currency="AOK"):
@@ -85,14 +85,14 @@ class AddressService(object):
         return Address.get(address=address)
 
     @classmethod
-    def richlist(cls, page, currency):
+    def richlist(cls, page, pagesize, currency):
         query = orm.select(
             (b.address, b.balance) for b in Balance if b.currency == currency
         )
 
         query = query.order_by(-2)
 
-        return query.page(page, pagesize=10)
+        return query.page(page, pagesize=pagesize)
 
     @classmethod
     def create(cls, address):

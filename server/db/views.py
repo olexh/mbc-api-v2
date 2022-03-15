@@ -1,6 +1,5 @@
 from ..methods.transaction import Transaction as NodeTransaction
 from ..methods.general import General as NodeGeneral
-from ..methods.token import Token as TokenGeneral
 from ..services import TransactionService
 from webargs.flaskparser import use_args
 from ..services import AddressService
@@ -25,7 +24,7 @@ def info():
     block = BlockService.latest_block()
 
     return utils.response({
-        "time": block.created.timestamp(),
+        "time": int(block.created.timestamp()),
         "blockhash": block.blockhash,
         "height": block.height,
         "chainwork": block.chainwork,
@@ -38,7 +37,7 @@ def info():
 @use_args(page_args, location="query")
 @orm.db_session
 def transactions(args, token):
-    transactions = TransactionService.transactions(args["page"], token)
+    transactions = TransactionService.transactions(args["page"], args["size"], token)
     result = []
 
     for entry in transactions:
@@ -48,7 +47,7 @@ def transactions(args, token):
         result.append({
             "height": transaction.block.height,
             "blockhash": transaction.block.blockhash,
-            "timestamp": transaction.block.created.timestamp(),
+            "timestamp": int(transaction.block.created.timestamp()),
             "txhash": transaction.txid,
             "amount": float(amount)
         })
@@ -59,15 +58,17 @@ def transactions(args, token):
 @use_args(page_args, location="query")
 @orm.db_session
 def blocks(args):
-    blocks = BlockService.blocks(args["page"])
+    blocks = BlockService.blocks(args["page"], args["size"])
     result = []
 
     for block in blocks:
         result.append({
             "height": block.height,
             "blockhash": block.blockhash,
-            "timestamp": block.created.timestamp(),
-            "tx": len(block.transactions)
+            "timestamp": int(block.created.timestamp()),
+            "reward": float(block.reward),
+            "tx": len(block.transactions),
+            "size": block.size
         })
 
     return utils.response(result)
@@ -84,7 +85,7 @@ def height(height):
             "blockhash": block.blockhash,
             "height": block.height,
             "tx": len(block.transactions),
-            "timestamp": block.created.timestamp(),
+            "timestamp": int(block.created.timestamp()),
             "difficulty": block.difficulty,
             "merkleroot": block.merkleroot,
             "chainwork": block.chainwork,
@@ -110,7 +111,7 @@ def block(bhash):
             "blockhash": block.blockhash,
             "height": block.height,
             "tx": len(block.transactions),
-            "timestamp": block.created.timestamp(),
+            "timestamp": int(block.created.timestamp()),
             "difficulty": block.difficulty,
             "merkleroot": block.merkleroot,
             "chainwork": block.chainwork,
@@ -131,7 +132,7 @@ def block_transactions(args, bhash):
     block = BlockService.get_by_hash(bhash)
 
     if block:
-        transactions = block.transactions.page(args["page"], pagesize=10)
+        transactions = block.transactions.page(args["page"], pagesize=args["size"])
         result = []
 
         for transaction in transactions:
@@ -166,7 +167,7 @@ def history(args, address):
     if address:
         transactions = address.transactions.order_by(
             orm.desc(Transaction.id)
-        ).page(args["page"], pagesize=10)
+        ).page(args["page"], pagesize=args["size"])
 
         for transaction in transactions:
             result.append(transaction.display())
@@ -196,7 +197,7 @@ def count(address):
 @use_args(page_args, location="query")
 @orm.db_session
 def richlist(args, token):
-    addresses = AddressService.richlist(args["page"], token)
+    addresses = AddressService.richlist(args["page"], args["size"], token)
     result = []
 
     for entry in addresses:
@@ -220,7 +221,7 @@ def chart():
 
 @db.route("/balance/<string:address>", methods=["GET"])
 @orm.db_session
-def test(address):
+def balance(address):
     address = AddressService.get_by_address(address)
     block = BlockService.latest_block()
     result = []
@@ -233,7 +234,7 @@ def test(address):
             locked = locked_time + locked_height
             unspent = balance.balance - locked
 
-            if balance.balance == 0:
+            if balance.balance == 0 and balance.currency != "AOK":
                 continue
 
             result.append({
@@ -241,6 +242,44 @@ def test(address):
                 "balance": float(unspent),
                 "locked": float(locked)
             })
+
+    return utils.response(result)
+
+@db.route("/address/<string:address>", methods=["GET"])
+@orm.db_session
+def address(address):
+    address = AddressService.get_by_address(address)
+    block = BlockService.latest_block()
+    balances = []
+
+    result = {
+        "balances": [],
+        "transactions": 0,
+        "tokens": 0
+    }
+
+    if address:
+        for balance in address.balances:
+            locked_time = OutputService.locked_time(address, block.created.timestamp(), balance.currency)
+            locked_height = OutputService.locked_height(address, block.height, balance.currency)
+
+            locked = locked_time + locked_height
+            unspent = balance.balance - locked
+
+            if balance.balance == 0 and balance.currency != "AOK":
+                continue
+
+            if balance.currency != "AOK":
+                result["tokens"] += 1
+
+            balances.append({
+                "currency": balance.currency,
+                "balance": float(unspent),
+                "locked": float(locked)
+            })
+
+        result["transactions"] = len(address.transactions)
+        result["balances"] = balances
 
     return utils.response(result)
 
