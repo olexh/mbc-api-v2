@@ -1,5 +1,6 @@
 # python
 */**/__pycache__/*
+*.db-journal
 __pycache__/
 venv/*
 *.db
