@@ -86,7 +86,7 @@ class Transaction(db.Entity):
         latest_blocks = Block.select().order_by(
             orm.desc(Block.height)
         ).first()
-        return latest_blocks.height - self.block.height + 1,
+        return latest_blocks.height - self.block.height + 1
 
     def display(self):
         output_amount = 0
