@@ -438,14 +438,14 @@ def price_stats():
         }
     })
 
-@db.route("/сhart/price", methods=["GET"])
+@db.route("/chart/price", methods=["GET"])
 @orm.db_session
 def price_chart():
     result = [{"timestamp": 1644789600, "value": 5.86}, {"timestamp": 1644876000, "value": 1.7}, {"timestamp": 1644962400, "value": 7.98}, {"timestamp": 1645048800, "value": 4.63}, {"timestamp": 1645135200, "value": 9.82}, {"timestamp": 1645221600, "value": 4.82}, {"timestamp": 1645308000, "value": 3.86}, {"timestamp": 1645394400, "value": 1.93}, {"timestamp": 1645480800, "value": 4.06}, {"timestamp": 1645567200, "value": 7.08}, {"timestamp": 1645653600, "value": 4.77}, {"timestamp": 1645740000, "value": 8.15}, {"timestamp": 1645826400, "value": 9.94}, {"timestamp": 1645912800, "value": 9.95}, {"timestamp": 1645999200, "value": 2.96}, {"timestamp": 1646085600, "value": 8.38}, {"timestamp": 1646172000, "value": 4.66}, {"timestamp": 1646258400, "value": 8.12}, {"timestamp": 1646344800, "value": 3.15}, {"timestamp": 1646431200, "value": 7.52}, {"timestamp": 1646517600, "value": 3.29}, {"timestamp": 1646604000, "value": 6.36}, {"timestamp": 1646690400, "value": 8.77}, {"timestamp": 1646776800, "value": 8.11}, {"timestamp": 1646863200, "value": 2.97}, {"timestamp": 1646949600, "value": 6.06}, {"timestamp": 1647036000, "value": 4.36}, {"timestamp": 1647122400, "value": 8.35}, {"timestamp": 1647208800, "value": 5.13}]
 
     return utils.response(result)
 
-@db.route("/сhart/transactions", methods=["GET"])
+@db.route("/chart/transactions", methods=["GET"])
 @use_args(chart_args, location="query")
 @orm.db_session
 def transactions_chart(args):
@@ -453,7 +453,7 @@ def transactions_chart(args):
 
     return utils.response(result)
 
-@db.route("/сhart/addresses", methods=["GET"])
+@db.route("/chart/addresses", methods=["GET"])
 @use_args(chart_args, location="query")
 @orm.db_session
 def addresses_chart(args):
