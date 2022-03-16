@@ -9,6 +9,7 @@ from ..models import Transaction
 from .args import broadcast_args
 from .args import tokens_args
 from ..models import Balance
+from .args import chart_args
 from .args import page_args
 from flask import Blueprint
 from ..tools import display
@@ -404,5 +405,58 @@ def tokens_list(args):
 
     for token in tokens:
         result.append(token.name)
+
+    return utils.response(result)
+
+@db.route("/stats/general", methods=["GET"])
+@orm.db_session
+def general_stats():
+    return utils.response({
+        "addresses": 75419,
+        "transactions": 123456,
+        "tokens": 12,
+        "nodes": 300,
+        "change": {
+            "addresses": 510,
+            "transactions": 650,
+            "tokens": 3,
+            "nodes": -10,
+        }
+    })
+
+@db.route("/stats/price", methods=["GET"])
+@orm.db_session
+def price_stats():
+    return utils.response({
+        "price": 1.263,
+        "marketcap": 6546042.20,
+        "volume": 2093010.05,
+        "change": {
+            "price": 31.9,
+            "marketcap": 25.1,
+            "volume": -10.3,
+        }
+    })
+
+@db.route("/сhart/price", methods=["GET"])
+@orm.db_session
+def price_chart():
+    result = [{"timestamp": 1644789600, "value": 5.86}, {"timestamp": 1644876000, "value": 1.7}, {"timestamp": 1644962400, "value": 7.98}, {"timestamp": 1645048800, "value": 4.63}, {"timestamp": 1645135200, "value": 9.82}, {"timestamp": 1645221600, "value": 4.82}, {"timestamp": 1645308000, "value": 3.86}, {"timestamp": 1645394400, "value": 1.93}, {"timestamp": 1645480800, "value": 4.06}, {"timestamp": 1645567200, "value": 7.08}, {"timestamp": 1645653600, "value": 4.77}, {"timestamp": 1645740000, "value": 8.15}, {"timestamp": 1645826400, "value": 9.94}, {"timestamp": 1645912800, "value": 9.95}, {"timestamp": 1645999200, "value": 2.96}, {"timestamp": 1646085600, "value": 8.38}, {"timestamp": 1646172000, "value": 4.66}, {"timestamp": 1646258400, "value": 8.12}, {"timestamp": 1646344800, "value": 3.15}, {"timestamp": 1646431200, "value": 7.52}, {"timestamp": 1646517600, "value": 3.29}, {"timestamp": 1646604000, "value": 6.36}, {"timestamp": 1646690400, "value": 8.77}, {"timestamp": 1646776800, "value": 8.11}, {"timestamp": 1646863200, "value": 2.97}, {"timestamp": 1646949600, "value": 6.06}, {"timestamp": 1647036000, "value": 4.36}, {"timestamp": 1647122400, "value": 8.35}, {"timestamp": 1647208800, "value": 5.13}]
+
+    return utils.response(result)
+
+@db.route("/сhart/transactions", methods=["GET"])
+@use_args(chart_args, location="query")
+@orm.db_session
+def transactions_chart(args):
+    result = [{"timestamp": 1644789600, "value": 894}, {"timestamp": 1644876000, "value": 1122}, {"timestamp": 1644962400, "value": 108}, {"timestamp": 1645048800, "value": 499}, {"timestamp": 1645135200, "value": 1435}, {"timestamp": 1645221600, "value": 915}, {"timestamp": 1645308000, "value": 1101}, {"timestamp": 1645394400, "value": 1017}, {"timestamp": 1645480800, "value": 620}, {"timestamp": 1645567200, "value": 1147}, {"timestamp": 1645653600, "value": 479}, {"timestamp": 1645740000, "value": 462}, {"timestamp": 1645826400, "value": 577}, {"timestamp": 1645912800, "value": 384}, {"timestamp": 1645999200, "value": 346}, {"timestamp": 1646085600, "value": 467}, {"timestamp": 1646172000, "value": 1220}, {"timestamp": 1646258400, "value": 1027}, {"timestamp": 1646344800, "value": 510}, {"timestamp": 1646431200, "value": 174}, {"timestamp": 1646517600, "value": 225}, {"timestamp": 1646604000, "value": 1220}, {"timestamp": 1646690400, "value": 289}, {"timestamp": 1646776800, "value": 103}, {"timestamp": 1646863200, "value": 515}, {"timestamp": 1646949600, "value": 1053}, {"timestamp": 1647036000, "value": 1317}, {"timestamp": 1647122400, "value": 416}, {"timestamp": 1647208800, "value": 799}]
+
+    return utils.response(result)
+
+@db.route("/сhart/addresses", methods=["GET"])
+@use_args(chart_args, location="query")
+@orm.db_session
+def addresses_chart(args):
+    result = [{"timestamp": 1644789600, "value": 500}, {"timestamp": 1644876000, "value": 1478}, {"timestamp": 1644962400, "value": 671}, {"timestamp": 1645048800, "value": 774}, {"timestamp": 1645135200, "value": 109}, {"timestamp": 1645221600, "value": 1437}, {"timestamp": 1645308000, "value": 715}, {"timestamp": 1645394400, "value": 1351}, {"timestamp": 1645480800, "value": 500}, {"timestamp": 1645567200, "value": 575}, {"timestamp": 1645653600, "value": 1417}, {"timestamp": 1645740000, "value": 1485}, {"timestamp": 1645826400, "value": 294}, {"timestamp": 1645912800, "value": 1001}, {"timestamp": 1645999200, "value": 1042}, {"timestamp": 1646085600, "value": 640}, {"timestamp": 1646172000, "value": 910}, {"timestamp": 1646258400, "value": 607}, {"timestamp": 1646344800, "value": 1208}, {"timestamp": 1646431200, "value": 390}, {"timestamp": 1646517600, "value": 728}, {"timestamp": 1646604000, "value": 856}, {"timestamp": 1646690400, "value": 151}, {"timestamp": 1646776800, "value": 1043}, {"timestamp": 1646863200, "value": 475}, {"timestamp": 1646949600, "value": 951}, {"timestamp": 1647036000, "value": 185}, {"timestamp": 1647122400, "value": 927}, {"timestamp": 1647208800, "value": 359}]
 
     return utils.response(result)

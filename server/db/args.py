@@ -13,3 +13,8 @@ tokens_args = {
     "page": fields.Int(missing=1, validate=validate.Range(min=1)),
     "search": fields.Str(missing=None)
 }
+
+chart_args = {
+    "resolution": fields.Int(missing="1D", validate=lambda r: r in ["1D", "1M", "1Y"]),
+    "currency": fields.Str(missing="AOK")
+}
