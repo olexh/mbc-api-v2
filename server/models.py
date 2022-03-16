@@ -81,11 +81,14 @@ class Transaction(db.Entity):
 
     addresses = orm.Set("Address")
 
-    def display(self):
+    @property
+    def confirmations(self):
         latest_blocks = Block.select().order_by(
             orm.desc(Block.height)
         ).first()
+        return latest_blocks.height - self.block.height + 1,
 
+    def display(self):
         output_amount = 0
         input_amount = 0
         outputs = []
@@ -123,7 +126,7 @@ class Transaction(db.Entity):
         outputs = sorted(outputs, key=lambda d: d["index"])
 
         return {
-            "confirmations": latest_blocks.height - self.block.height + 1,
+            "confirmations": self.confirmations,
             "fee": float(input_amount - output_amount),
             "timestamp": int(self.created.timestamp()),
             "amount": float(self.amount),

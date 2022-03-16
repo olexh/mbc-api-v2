@@ -50,6 +50,9 @@ def transactions(args, token):
             "height": transaction.block.height,
             "blockhash": transaction.block.blockhash,
             "timestamp": int(transaction.block.created.timestamp()),
+            "confirmations": transaction.confirmations,
+            "coinstake": transaction.coinstake,
+            "coinbase": transaction.coinbase,
             "txhash": transaction.txid,
             "amount": float(amount)
         })
@@ -221,7 +224,7 @@ def richlist(args, name):
         result.append({
             "address": balance.address.address,
             "balance": float(balance.balance),
-            "percentage": round(float((balance.balance / supply) * 100), 2)
+            "percentage": round(float((balance.balance / supply) * 100), 4)
         })
 
     return utils.response(result)
