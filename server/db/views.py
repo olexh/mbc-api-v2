@@ -388,3 +388,21 @@ def tokens(args):
         result.append(token.display)
 
     return utils.response(result)
+
+@db.route("/tokens/list", methods=["GET"])
+@use_args(tokens_args, location="query")
+@orm.db_session
+def tokens_list(args):
+    tokens = Token.select(lambda t: t.category in ["unique", "sub", "root"])
+
+    if args["search"]:
+        tokens = tokens.filter(lambda t: t.name.startswith(args["search"]))
+
+    tokens = tokens.page(args["page"], 100)
+
+    result = []
+
+    for token in tokens:
+        result.append(token.name)
+
+    return utils.response(result)
