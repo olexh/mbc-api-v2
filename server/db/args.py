@@ -11,6 +11,7 @@ broadcast_args = {
 
 tokens_args = {
     "page": fields.Int(missing=1, validate=validate.Range(min=1)),
+    "size": fields.Int(missing=10, validate=validate.Range(min=1, max=100)),
     "search": fields.Str(missing=None)
 }
 
