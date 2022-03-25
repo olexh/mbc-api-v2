@@ -37,11 +37,14 @@ def info():
         "reward": float(block.reward)
     })
 
-@db.route("/transactions", defaults={"token": "AOK"}, methods=["GET"])
+@db.route("/transactions", defaults={"token": None}, methods=["GET"])
 @db.route("/transactions/<string:token>", methods=["GET"])
 @use_args(page_args, location="query")
 @orm.db_session
 def transactions(args, token):
+    if not token:
+        token = "AOK"
+
     transactions = TransactionIndex.select(
         lambda t: t.currency == token
     ).order_by(orm.desc(TransactionIndex.id))
@@ -235,11 +238,14 @@ def count(address):
         "tokens": tokens
     })
 
-@db.route("/richlist", defaults={"name": "AOK"}, methods=["GET"])
+@db.route("/richlist", defaults={"name": None}, methods=["GET"])
 @db.route("/richlist/<string:name>", methods=["GET"])
 @use_args(page_args, location="query")
 @orm.db_session
 def richlist(args, name):
+    if not name:
+        name = "AOK"
+
     balances = Balance.select(
         lambda b: b.currency == name and b.balance > 0
     ).order_by(
