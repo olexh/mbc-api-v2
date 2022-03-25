@@ -6,8 +6,13 @@ import json
 def dead_response(message="Invalid Request", rid=config.rid):
     return {"error": {"code": 404, "message": message}, "id": rid}
 
-def response(result, error=None, rid=config.rid):
-    return {"error": error, "id": rid, "result": result}
+def response(result, error=None, rid=config.rid, pagination=None):
+    result = {"error": error, "id": rid, "result": result}
+
+    if pagination:
+        result["pagination"] = pagination
+
+    return result
 
 def make_request(method, params=[]):
     headers = {"content-type": "text/plain;"}

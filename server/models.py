@@ -79,7 +79,18 @@ class Transaction(db.Entity):
     outputs = orm.Set("Output")
     inputs = orm.Set("Input")
 
+    index = orm.Set("TransactionIndex")
     addresses = orm.Set("Address")
+
+    @property
+    def currencies(self):
+        currencies = []
+
+        for output in self.outputs:
+            if output.currency not in currencies:
+                currencies.append(output.currency)
+
+        return currencies
 
     @property
     def confirmations(self):
@@ -205,6 +216,14 @@ class Output(db.Entity):
         balance.balance -= self.amount
 
     orm.composite_index(transaction, n)
+
+class TransactionIndex(db.Entity):
+    _table_ = "chain_transaction_index"
+
+    currency = orm.Required(str, default="AOK", index=True)
+    amount = orm.Required(Decimal, precision=20, scale=8)
+    transaction = orm.Required("Transaction")
+    created = orm.Required(datetime)
 
 
 db.generate_mapping(create_tables=True)

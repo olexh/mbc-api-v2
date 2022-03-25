@@ -2,6 +2,7 @@ from ..methods.transaction import Transaction as NodeTransaction
 from ..methods.general import General as NodeGeneral
 from ..services import TransactionService
 from webargs.flaskparser import use_args
+from ..models import TransactionIndex
 from ..services import AddressService
 from ..services import OutputService
 from ..services import BlockService
@@ -16,6 +17,7 @@ from ..tools import display
 from ..models import Token
 from .. import utils
 from pony import orm
+import math
 
 from decimal import Decimal
 
@@ -40,13 +42,21 @@ def info():
 @use_args(page_args, location="query")
 @orm.db_session
 def transactions(args, token):
-    transactions = TransactionService.transactions(args["page"], args["size"], token)
+    transactions = TransactionIndex.select(
+        lambda t: t.currency == token
+    ).order_by(orm.desc(TransactionIndex.id))
+
     result = []
 
-    for entry in transactions:
-        transaction = entry[0]
-        amount = entry[1]
+    pagination = {
+        "total": math.ceil(transactions.count(distinct=False) / args["size"]),
+        "page": args["page"]
+    }
 
+    transactions = transactions.page(args["page"], pagesize=args["size"])
+
+    for index in transactions:
+        transaction = index.transaction
         result.append({
             "height": transaction.block.height,
             "blockhash": transaction.block.blockhash,
@@ -55,16 +65,24 @@ def transactions(args, token):
             "coinstake": transaction.coinstake,
             "coinbase": transaction.coinbase,
             "txhash": transaction.txid,
-            "amount": float(amount)
+            "amount": float(index.amount)
         })
 
-    return utils.response(result)
+    return utils.response(result, pagination=pagination)
 
 @db.route("/blocks", methods=["GET"])
 @use_args(page_args, location="query")
 @orm.db_session
 def blocks(args):
-    blocks = BlockService.blocks(args["page"], args["size"])
+    blocks = BlockService.blocks()
+
+    pagination = {
+        "total": math.ceil(blocks.count(distinct=False) / args["size"]),
+        "page": args["page"]
+    }
+
+    blocks = blocks.page(args["page"], pagesize=args["size"])
+
     result = []
 
     for block in blocks:
@@ -77,7 +95,7 @@ def blocks(args):
             "size": block.size
         })
 
-    return utils.response(result)
+    return utils.response(result, pagination=pagination)
 
 @db.route("/height/<int:height>", methods=["GET"])
 @orm.db_session
@@ -138,13 +156,20 @@ def block_transactions(args, bhash):
     block = BlockService.get_by_hash(bhash)
 
     if block:
-        transactions = block.transactions.page(args["page"], pagesize=args["size"])
+        transactions = Transaction.select(lambda t: t.block == block).order_by(Transaction.created)
         result = []
+
+        pagination = {
+            "total": math.ceil(transactions.count(distinct=False) / args["size"]),
+            "page": args["page"]
+        }
+
+        transactions = transactions.page(args["page"], pagesize=args["size"])
 
         for transaction in transactions:
             result.append(transaction.display())
 
-        return utils.response(result)
+        return utils.response(result, pagination=pagination)
 
     return utils.dead_response("Block not found"), 404
 
@@ -170,15 +195,27 @@ def history(args, address):
     address = AddressService.get_by_address(address)
     result = []
 
+    pagination = {
+        "total": 1,
+        "page": 1
+    }
+
     if address:
         transactions = address.transactions.order_by(
             orm.desc(Transaction.id)
-        ).page(args["page"], pagesize=args["size"])
+        )
+
+        pagination = {
+            "total": math.ceil(transactions.count(distinct=False) / args["size"]),
+            "page": args["page"]
+        }
+
+        transactions = transactions.page(args["page"], pagesize=args["size"])
 
         for transaction in transactions:
             result.append(transaction.display())
 
-    return utils.response(result)
+    return utils.response(result, pagination=pagination)
 
 @db.route("/stats/<string:address>", methods=["GET"])
 @orm.db_session
@@ -207,7 +244,14 @@ def richlist(args, name):
         lambda b: b.currency == name and b.balance > 0
     ).order_by(
         orm.desc(Balance.balance)
-    ).page(args["page"], pagesize=args["size"])
+    )
+
+    pagination = {
+        "total": math.ceil(balances.count(distinct=False) / args["size"]),
+        "page": args["page"]
+    }
+
+    balances = balances.page(args["page"], pagesize=args["size"])
 
     block = BlockService.latest_block()
     supply = 0
@@ -228,7 +272,7 @@ def richlist(args, name):
             "percentage": round(float((balance.balance / supply) * 100), 4)
         })
 
-    return utils.response(result)
+    return utils.response(result, pagination=pagination)
 
 @db.route("/chart", methods=["GET"])
 @orm.db_session
@@ -316,12 +360,19 @@ def address_transactions(args, address):
 
         transactions = address.transactions.order_by(
             orm.desc(Transaction.created)
-        ).page(args["page"], pagesize=args["size"])
+        )
+
+        pagination = {
+            "total": math.ceil(transactions.count(distinct=False) / args["size"]),
+            "page": args["page"]
+        }
+
+        transactions = transactions.page(args["page"], pagesize=args["size"])
 
         for transaction in transactions:
             result.append(transaction.display())
 
-        return utils.response(result)
+        return utils.response(result, pagination=pagination)
 
     return utils.dead_response("Block not found"), 404
 
@@ -381,6 +432,11 @@ def tokens(args):
     if args["search"]:
         tokens = tokens.filter(lambda t: t.name.startswith(args["search"]))
 
+    pagination = {
+        "total": math.ceil(tokens.count(distinct=False) / args["size"]),
+        "page": args["page"]
+    }
+
     tokens = tokens.page(args["page"], 100)
 
     result = []
@@ -388,7 +444,7 @@ def tokens(args):
     for token in tokens:
         result.append(token.display)
 
-    return utils.response(result)
+    return utils.response(result, pagination=pagination)
 
 @db.route("/tokens/list", methods=["GET"])
 @use_args(tokens_args, location="query")
@@ -399,6 +455,11 @@ def tokens_list(args):
     if args["search"]:
         tokens = tokens.filter(lambda t: t.name.startswith(args["search"]))
 
+    pagination = {
+        "total": math.ceil(tokens.count(distinct=False) / args["size"]),
+        "page": args["page"]
+    }
+
     tokens = tokens.page(args["page"], 100)
 
     result = []
@@ -406,7 +467,7 @@ def tokens_list(args):
     for token in tokens:
         result.append(token.name)
 
-    return utils.response(result)
+    return utils.response(result, pagination=pagination)
 
 @db.route("/stats/general", methods=["GET"])
 @orm.db_session

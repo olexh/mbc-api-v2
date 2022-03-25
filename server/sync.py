@@ -11,6 +11,8 @@ from datetime import datetime
 from pony import orm
 from . import utils
 
+from .models import TransactionIndex
+
 from .utils import make_request
 from .models import Token
 
@@ -130,6 +132,7 @@ def sync_blocks():
             created = datetime.fromtimestamp(tx_data["time"])
             coinbase = block.stake is False and index == 0
             coinstake = block.stake and index == 1
+            indexes = {}
 
             transaction = TransactionService.create(
                 utils.amount(tx_data["amount"]), tx_data["txid"],
@@ -189,6 +192,22 @@ def sync_blocks():
                     balance = BalanceService.create(address, currency)
 
                 balance.balance += output.amount
+
+                if vout.currency not in indexes:
+                    indexes[vout.currency] = 0
+
+                indexes[vout.currency] += vout.amount
+
+            for currency in indexes:
+                if TransactionIndex.get(currency=currency, transaction=transaction):
+                    continue
+
+                TransactionIndex(**{
+                    "created": transaction.created,
+                    "amount": indexes[currency],
+                    "transaction": transaction,
+                    "currency": currency,
+                })
 
         latest_block = block
         orm.commit()
