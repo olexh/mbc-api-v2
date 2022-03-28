@@ -193,10 +193,10 @@ def sync_blocks():
 
                 balance.balance += output.amount
 
-                if vout.currency not in indexes:
-                    indexes[vout.currency] = 0
+                if output.currency not in indexes:
+                    indexes[output.currency] = 0
 
-                indexes[vout.currency] += vout.amount
+                indexes[output.currency] += output.amount
 
             for currency in indexes:
                 if TransactionIndex.get(currency=currency, transaction=transaction):
