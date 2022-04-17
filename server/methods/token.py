@@ -19,6 +19,10 @@ class Token():
             if name[0] == "@":
                 remove.append(name)
 
+            # Hide TEST tokens (WIP)
+            if name.startswith("TEST"):
+                remove.append(name)
+
         for name in remove:
             del data["result"][name]
 
