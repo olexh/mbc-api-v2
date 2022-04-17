@@ -435,6 +435,9 @@ def broadcast(args):
 def tokens(args):
     tokens = Token.select(lambda t: t.category in ["unique", "sub", "root"])
 
+    # Hide test tokens from tokens list (WIP)
+    tokens = tokens.filter(lambda t: not t.name.startswith("TEST"))
+
     if args["search"]:
         tokens = tokens.filter(lambda t: t.name.startswith(args["search"]))
 
