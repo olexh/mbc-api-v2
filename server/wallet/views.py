@@ -1,85 +1,41 @@
-from ..methods.transaction import Transaction as NodeTransaction
-from ..models import Transaction, Block
-from ..services import TransactionService
+"""Wallet API"""
 from webargs.flaskparser import use_args
+from flask import Blueprint
+from pony import orm
+
+from ..methods.transaction import Transaction as NodeTransaction
+from .args import history_args, addresses_args, unspent_args
+from .args import broadcast_args, utxo_args, check_args
+from ..services import TransactionService
+from ..methods.address import Address
 from ..services import AddressService
 from ..services import OutputService
 from ..services import BlockService
 from ..services import TokenService
-from flask import Blueprint
+from ..models import Transaction
+from .utils import display_tx
 from ..tools import display
 from .. import utils
-from pony import orm
-from . import args
 
 wallet = Blueprint("wallet", __name__, url_prefix="/wallet/")
 
-def display_tx(transaction):
-    latest_blocks = Block.select().order_by(
-        orm.desc(Block.height)
-    ).first()
-
-    output_amount = 0
-    input_amount = 0
-    outputs = []
-    inputs = []
-
-    for vin in transaction.inputs:
-        units = TokenService.get_units(vin.vout.currency)
-
-        inputs.append({
-            "address": vin.vout.address.address,
-            "currency": vin.vout.currency,
-            "amount": utils.satoshis(vin.vout.amount),
-            "units": units
-        })
-
-        if vin.vout.currency == "AOK":
-            input_amount += utils.satoshis(vin.vout.amount)
-
-    for vout in transaction.outputs:
-        units = TokenService.get_units(vout.currency)
-
-        outputs.append({
-            "address": vout.address.address,
-            "currency": vout.currency,
-            "timelock": vout.timelock,
-            "category": vout.category,
-            "amount": utils.satoshis(vout.amount),
-            "units": units,
-            "spent": vout.spent
-        })
-
-        if vout.currency == "AOK":
-            output_amount += utils.satoshis(vout.amount)
-
-    return {
-        "confirmations": latest_blocks.height - transaction.block.height + 1,
-        "fee": input_amount - output_amount,
-        "timestamp": int(transaction.created.timestamp()),
-        "amount": utils.satoshis(transaction.amount),
-        "coinstake": transaction.coinstake,
-        "height": transaction.block.height,
-        "coinbase": transaction.coinbase,
-        "txid": transaction.txid,
-        "size": transaction.size,
-        "outputs": outputs,
-        "mempool": False,
-        "inputs": inputs
-    }
-
-
 @wallet.route("/balance/<string:address>", methods=["GET"])
 @orm.db_session
-def test(address):
+def get_balance(address):
+    """Return balance of address"""
     address = AddressService.get_by_address(address)
     block = BlockService.latest_block()
     result = []
 
     if address:
         for balance in address.balances:
-            locked_time = OutputService.locked_time(address, block.created.timestamp(), balance.currency)
-            locked_height = OutputService.locked_height(address, block.height, balance.currency)
+            locked_time = OutputService.locked_time(
+                address, block.created.timestamp(), balance.currency
+            )
+
+            locked_height = OutputService.locked_height(
+                address, block.height, balance.currency
+            )
 
             locked = locked_time + locked_height
             unspent = balance.balance - locked
@@ -98,9 +54,10 @@ def test(address):
     return utils.response(result)
 
 @wallet.route("/history", methods=["POST"])
-@use_args(args.history_args, location="json")
+@use_args(history_args, location="json")
 @orm.db_session
-def history(args):
+def get_history(args):
+    """Return history of the address"""
     transactions = None
     addresses = []
     result = []
@@ -131,30 +88,31 @@ def history(args):
 
     transactions = transactions.limit(args["count"])
 
-    for transaction in transactions:
-        result.append(display_tx(transaction))
+    for db_tx in transactions:
+        result.append(display_tx(db_tx))
 
     return utils.response(result)
 
 @wallet.route("/transaction/<string:txid>", methods=["GET"])
 @orm.db_session
-def transaction(txid):
-    transaction = TransactionService.get_by_txid(txid)
-
-    if transaction:
-        return utils.response(display_tx(transaction))
+def get_transaction(txid):
+    """Get transaction by txid"""
+    if (db_tx := TransactionService.get_by_txid(txid)):
+        return utils.response(display_tx(db_tx))
 
     data = NodeTransaction.info(txid)
-    if not data["error"]:
-        result = display.tx_to_wallet(data)
-        return utils.response(result)
 
-    return utils.dead_response("Transaction not found"), 404
+    if data["error"]:
+        return utils.dead_response("Transaction not found"), 404
+
+    result = display.tx_to_wallet(data)
+    return utils.response(result)
 
 @wallet.route("/check", methods=["POST"])
-@use_args(args.addresses_args, location="json")
+@use_args(addresses_args, location="json")
 @orm.db_session
-def check(args):
+def get_check(args):
+    """Check if address has been used"""
     result = []
 
     for raw_address in args["addresses"]:
@@ -166,9 +124,10 @@ def check(args):
     return utils.response(result)
 
 @wallet.route("/utxo", methods=["POST"])
-@use_args(args.utxo_args, location="json")
+@use_args(utxo_args, location="json")
 @orm.db_session
-def utxo(args):
+def get_utxo(args):
+    """Check UTXOs"""
     result = []
 
     for output in args["outputs"]:
@@ -198,13 +157,15 @@ def utxo(args):
     return utils.response(result)
 
 @wallet.route("/broadcast", methods=["POST"])
-@use_args(args.broadcast_args, location="json")
-def broadcast(args):
+@use_args(broadcast_args, location="json")
+def send_broadcast(args):
+    """Broadcast raw transaction"""
     return NodeTransaction.broadcast(args["raw"])
 
 @wallet.route("/decode", methods=["POST"])
-@use_args(args.broadcast_args, location="json")
-def decode(args):
+@use_args(broadcast_args, location="json")
+def decode_raw(args):
+    """Decode raw transaction"""
     data = NodeTransaction.decode(args["raw"])
 
     if data["error"] is None:
@@ -248,3 +209,15 @@ def decode(args):
             data["result"]["vout"][index]["scriptPubKey"] = script
 
     return data
+
+@wallet.route("/unspent/<string:address>", methods=["GET"])
+@use_args(unspent_args, location="query")
+def get_unspent(args, address):
+    """Get address UTXOs"""
+    return Address.unspent(address, args["amount"], args["token"])
+
+@wallet.route("/check", methods=["POST"])
+@use_args(check_args, location="JSON")
+def check_addresses(args):
+    """Check addresses"""
+    return Address.check(args["addresses"])
