@@ -224,8 +224,8 @@ def check_addresses(args):
     """Check addresses"""
     return Address.check(args["addresses"])
 
-@wallet.route("/tokens", methods=["POST"])
-@use_args(token_args, location="GET")
+@wallet.route("/tokens", methods=["GET"])
+@use_args(token_args, location="query")
 def get_tokens(args):
     """Get tokens"""
     return Token.list(
