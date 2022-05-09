@@ -32,3 +32,9 @@ check_args = {
         fields.Str, missing=[], validate=validate.Length(min=1, max=20)
     )
 }
+
+token_args = {
+    "count": fields.Int(missing=50, validate=validate.Range(min=1, max=500)),
+    "offset": fields.Int(missing=0, validate=validate.Range(min=0)),
+    "search": fields.Str(missing="")
+}

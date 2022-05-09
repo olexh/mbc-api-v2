@@ -5,13 +5,15 @@ from pony import orm
 
 from ..methods.transaction import Transaction as NodeTransaction
 from .args import history_args, addresses_args, unspent_args
-from .args import broadcast_args, utxo_args, check_args
+from .args import broadcast_args, token_args
 from ..services import TransactionService
+from .args import check_args, utxo_args
 from ..methods.address import Address
 from ..services import AddressService
 from ..services import OutputService
 from ..services import BlockService
 from ..services import TokenService
+from ..methods.token import Token
 from ..models import Transaction
 from .utils import display_tx
 from ..tools import display
@@ -221,3 +223,11 @@ def get_unspent(args, address):
 def check_addresses(args):
     """Check addresses"""
     return Address.check(args["addresses"])
+
+@wallet.route("/tokens", methods=["POST"])
+@use_args(token_args, location="GET")
+def get_tokens(args):
+    """Get tokens"""
+    return Token.list(
+        args["offset"], args["count"], args["search"]
+    )
