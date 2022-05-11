@@ -9,6 +9,7 @@ from .args import broadcast_args, token_args
 from ..services import TransactionService
 from .args import check_args, utxo_args
 from ..methods.address import Address
+from ..methods.general import General
 from ..services import AddressService
 from ..services import OutputService
 from ..services import BlockService
@@ -231,3 +232,8 @@ def get_tokens(args):
     return Token.list(
         args["offset"], args["count"], args["search"]
     )
+
+@wallet.route("/info", methods=["GET"])
+def get_info(args):
+    """Return chain info"""
+    return General.info()
