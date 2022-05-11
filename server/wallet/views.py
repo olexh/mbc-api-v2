@@ -234,6 +234,6 @@ def get_tokens(args):
     )
 
 @wallet.route("/info", methods=["GET"])
-def get_info(args):
+def get_info():
     """Return chain info"""
     return General.info()
