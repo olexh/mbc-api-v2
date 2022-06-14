@@ -89,6 +89,11 @@ def get_history(args):
         if before:
             transactions = transactions.filter(lambda t: t.created < before.created)
 
+    if args["currency"]:
+        transactions = transactions.filter(
+            lambda t: t.has_currency(args["currency"])
+        )
+
     transactions = transactions.limit(args["count"])
 
     for db_tx in transactions:

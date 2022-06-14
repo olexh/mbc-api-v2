@@ -7,7 +7,8 @@ history_args = {
     "after": fields.Str(missing=None),
     "addresses": fields.List(
         fields.Str, missing=[], validate=validate.Length(min=1, max=20)
-    )
+    ),
+    "currency": fields.Str(missing=None)
 }
 
 addresses_args = {

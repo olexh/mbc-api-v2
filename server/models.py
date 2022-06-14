@@ -92,6 +92,11 @@ class Transaction(db.Entity):
 
         return currencies
 
+    def has_currency(self, currency):
+        return orm.select(
+            output for output in self.outputs if output.currency == currency
+        ).count() > 0
+
     @property
     def confirmations(self):
         latest_blocks = Block.select().order_by(
