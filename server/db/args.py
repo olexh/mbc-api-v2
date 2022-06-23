@@ -7,7 +7,7 @@ page_args = {
 
 page_args_richlist = {
     "page": fields.Int(missing=1, validate=validate.Range(min=1)),
-    "size": fields.Int(missing=10, validate=validate.Range(min=1, max=10000))
+    "size": fields.Int(missing=10, validate=validate.Range(min=1, max=100000))
 }
 
 broadcast_args = {
