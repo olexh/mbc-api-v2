@@ -240,7 +240,7 @@ def count(address):
 
 @db.route("/richlist", defaults={"name": None}, methods=["GET"])
 @db.route("/richlist/<string:name>", methods=["GET"])
-@use_args(page_args, location="query")
+@use_args(page_args_richlist, location="query")
 @orm.db_session
 def richlist(args, name):
     if not name:
