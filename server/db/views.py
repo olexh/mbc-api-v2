@@ -280,6 +280,47 @@ def richlist(args, name):
 
     return utils.response(result, pagination=pagination)
 
+@db.route("/richlist/full", defaults={"name": None}, methods=["GET"])
+@db.route("/richlist/<string:name>/full", methods=["GET"])
+@use_args(page_args, location="query")
+@orm.db_session
+def richlist_full(args, name):
+    if not name:
+        name = "AOK"
+
+    balances = Balance.select(
+        lambda b: b.currency == name and b.balance > 0
+    ).order_by(
+        orm.desc(Balance.balance)
+    )
+
+    pagination = {
+        "total": math.ceil(balances.count(distinct=False) / args["size"]),
+        "page": args["page"]
+    }
+
+    block = BlockService.latest_block()
+    supply = 0
+
+    if name == "AOK":
+        supply = Decimal(utils.amount(utils.supply(block.height)["supply"]))
+
+    else:
+        if (token := Token.get(name=name)):
+            supply = token.amount
+
+    result = []
+
+    for balance in balances:
+        result.append({
+            "address": balance.address.address,
+            "balance": float(balance.balance),
+            "percentage": round(float((balance.balance / supply) * 100), 4)
+        })
+
+    return utils.response(result, pagination=pagination)
+
+
 @db.route("/chart", methods=["GET"])
 @orm.db_session
 def chart():
