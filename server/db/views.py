@@ -5,6 +5,7 @@ from webargs.flaskparser import use_args
 from ..models import TransactionIndex
 from ..services import AddressService
 from ..services import OutputService
+from .args import page_args_richlist
 from ..services import BlockService
 from ..models import Transaction
 from .args import broadcast_args
