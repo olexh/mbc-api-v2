@@ -1,3 +1,4 @@
+import re
 from ..methods.transaction import Transaction as NodeTransaction
 from ..methods.general import General as NodeGeneral
 from ..services import TransactionService
@@ -441,6 +442,24 @@ def mempool():
 
     return data
 
+def get_logo(name):
+    if name == "AOK":
+        return "https://api.aok.network/static/logo/aok.svg"
+
+    elif name == "ARTL":
+        return "https://api.aok.network/static/logo/artl.svg"
+
+    elif name == "CCA":
+        return "https://api.aok.network/static/logo/cca.svg"
+
+    elif name == "MEC":
+        return "https://api.aok.network/static/logo/mec.svg"
+
+    elif name == "SERG":
+        return "https://api.aok.network/static/logo/serg.svg"
+
+    return f"https://source.boringavatars.com/bauhaus/120/{name}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51"
+
 @db.route("/token/<string:name>", methods=["GET"])
 @orm.db_session
 def token_data(name):
@@ -452,7 +471,7 @@ def token_data(name):
         ).count(distinct=False)
 
         return utils.response({
-            "logo": f"https://source.boringavatars.com/bauhaus/120/{name}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51",
+            "logo": get_logo(name),
             "amount": float(token.amount),
             "reissuable": token.reissuable,
             "category": token.category,
