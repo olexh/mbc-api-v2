@@ -3,6 +3,24 @@ import config
 import math
 import json
 
+def get_logo(name):
+    if name == "AOK":
+        return "https://api.aok.network/static/logo/aok.svg"
+
+    elif name == "ARTL":
+        return "https://api.aok.network/static/logo/artl.svg"
+
+    elif name == "CCA":
+        return "https://api.aok.network/static/logo/cca.svg"
+
+    elif name == "MEC":
+        return "https://api.aok.network/static/logo/mec.svg"
+
+    elif name == "SERG":
+        return "https://api.aok.network/static/logo/serg.svg"
+
+    return f"https://source.boringavatars.com/bauhaus/120/{name}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51"
+
 def dead_response(message="Invalid Request", rid=config.rid):
     return {"error": {"code": 404, "message": message}, "id": rid}
 

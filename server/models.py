@@ -1,6 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 from pony import orm
+from . import utils
 import config
 
 # db = orm.Database(
@@ -30,7 +31,7 @@ class Token(db.Entity):
         # ).count(distinct=False)
 
         return {
-            "logo": f"https://source.boringavatars.com/bauhaus/120/{self.name}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51",
+            "logo": utils.get_logo(self.name),
             "amount": float(self.amount),
             "reissuable": self.reissuable,
             "category": self.category,
