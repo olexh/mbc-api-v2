@@ -72,7 +72,9 @@ def supply(height):
 
     return {
         "halvings": int(halvings_count),
-        "supply": int(supply)
+        # "supply": int(supply),
+        # ToDo: fix supply calculation
+        "supply": satoshis(1_000_000_000)
     }
 
 def satoshis(value):
