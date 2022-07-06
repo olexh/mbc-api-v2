@@ -19,6 +19,15 @@ def get_logo(name):
     elif name == "SERG":
         return "https://api.aok.network/static/logo/serg.svg"
 
+    elif name == "PAPT":
+        return "https://api.aok.network/static/logo/papt.svg"
+
+    elif name == "CCA/USDT":
+        return "https://api.aok.network/static/logo/cca_usdt.svg"
+
+    elif name == "MEC/HOWLING2":
+        return "https://api.aok.network/static/logo/mec_howling2.svg"
+
     return f"https://source.boringavatars.com/bauhaus/120/{name}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51"
 
 def dead_response(message="Invalid Request", rid=config.rid):

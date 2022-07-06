@@ -1,4 +1,3 @@
-import re
 from ..methods.transaction import Transaction as NodeTransaction
 from ..methods.general import General as NodeGeneral
 from ..services import TransactionService
