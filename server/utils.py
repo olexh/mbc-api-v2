@@ -4,29 +4,31 @@ import math
 import json
 
 def get_logo(name):
+    cache_fix = 2
+
     if name == "AOK":
-        return "https://api.aok.network/static/logo/aok.svg"
+        return f"https://api.aok.network/static/logo/aok.svg?{cache_fix}"
 
     elif name == "ARTL":
-        return "https://api.aok.network/static/logo/artl.svg"
+        return f"https://api.aok.network/static/logo/artl.svg?{cache_fix}"
 
     elif name == "CCA":
-        return "https://api.aok.network/static/logo/cca.svg"
+        return f"https://api.aok.network/static/logo/cca.svg?{cache_fix}"
 
     elif name == "MEC":
-        return "https://api.aok.network/static/logo/mec.svg"
+        return f"https://api.aok.network/static/logo/mec.svg?{cache_fix}"
 
     elif name == "SERG":
-        return "https://api.aok.network/static/logo/serg.svg"
+        return f"https://api.aok.network/static/logo/serg.svg?{cache_fix}"
 
     elif name == "PAPT":
-        return "https://api.aok.network/static/logo/papt.svg"
+        return f"https://api.aok.network/static/logo/papt.svg?{cache_fix}"
 
     elif name == "CCA/USDT":
-        return "https://api.aok.network/static/logo/cca_usdt.svg"
+        return f"https://api.aok.network/static/logo/cca_usdt.svg?{cache_fix}"
 
     elif name == "MEC/HOWLING2":
-        return "https://api.aok.network/static/logo/mec_howling2.svg"
+        return f"https://api.aok.network/static/logo/mec_howling2.svg?{cache_fix}"
 
     boring_name = name.replace("/", ":")
 
