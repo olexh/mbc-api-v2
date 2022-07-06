@@ -28,7 +28,9 @@ def get_logo(name):
     elif name == "MEC/HOWLING2":
         return "https://api.aok.network/static/logo/mec_howling2.svg"
 
-    return f"https://source.boringavatars.com/bauhaus/120/{name}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51"
+    boring_name = name.replace("/", ":")
+
+    return f"https://source.boringavatars.com/bauhaus/120/{boring_name}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51"
 
 def dead_response(message="Invalid Request", rid=config.rid):
     return {"error": {"code": 404, "message": message}, "id": rid}
