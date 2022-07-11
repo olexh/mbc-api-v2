@@ -475,7 +475,7 @@ def broadcast(args):
 @use_args(tokens_args, location="query")
 @orm.db_session
 def tokens(args):
-    tokens = Token.select(lambda t: t.category in ["unique", "sub", "root"])
+    tokens = Token.select(lambda t: t.category in ["sub", "root"])
 
     # Hide test tokens from tokens list (WIP)
     tokens = tokens.filter(lambda t: not t.name.startswith("TEST"))
@@ -501,7 +501,7 @@ def tokens(args):
 @use_args(tokens_args, location="query")
 @orm.db_session
 def tokens_list(args):
-    tokens = Token.select(lambda t: t.category in ["unique", "sub", "root"])
+    tokens = Token.select(lambda t: t.category in ["sub", "root"])
 
     if args["search"]:
         tokens = tokens.filter(lambda t: t.name.startswith(args["search"]))
