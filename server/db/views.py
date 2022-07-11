@@ -441,7 +441,7 @@ def mempool():
 
     return data
 
-@db.route("/token/<string:name>", methods=["GET"])
+@db.route("/token/<path:name>", methods=["GET"])
 @orm.db_session
 def token_data(name):
     token = Token.get(name=name)
