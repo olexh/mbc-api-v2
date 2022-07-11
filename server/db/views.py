@@ -39,7 +39,7 @@ def info():
     })
 
 @db.route("/transactions", defaults={"token": None}, methods=["GET"])
-@db.route("/transactions/<string:token>", methods=["GET"])
+@db.route("/transactions/<path:token>", methods=["GET"])
 @use_args(page_args, location="query")
 @orm.db_session
 def transactions(args, token):
@@ -240,7 +240,7 @@ def count(address):
     })
 
 @db.route("/richlist", defaults={"name": None}, methods=["GET"])
-@db.route("/richlist/<string:name>", methods=["GET"])
+@db.route("/richlist/<path:name>", methods=["GET"])
 @use_args(page_args_richlist, location="query")
 @orm.db_session
 def richlist(args, name):
