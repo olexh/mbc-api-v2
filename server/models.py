@@ -1,5 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
+from email.policy import default
 from pony import orm
 from . import utils
 import config
@@ -231,5 +232,13 @@ class TransactionIndex(db.Entity):
     transaction = orm.Required("Transaction")
     created = orm.Required(datetime)
 
+class IPFSCache(db.Entity):
+    _table_ = "chain_ipfs_cache"
+
+    content = orm.Optional(orm.LongStr, nullable=True)
+    parsed = orm.Required(bool, default=False)
+    attempts = orm.Required(int, default=0)
+    mime = orm.Optional(str, nullable=True)
+    ipfs = orm.Required(str)
 
 db.generate_mapping(create_tables=True)

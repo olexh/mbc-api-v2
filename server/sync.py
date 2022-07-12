@@ -10,8 +10,10 @@ from .methods.block import Block
 from datetime import datetime
 from pony import orm
 from . import utils
+import requests
 
 from .models import TransactionIndex
+from .models import IPFSCache
 
 from .utils import make_request
 from .models import Token
@@ -35,6 +37,68 @@ def token_category(name):
     if name[0] == "!":
         return "owner"
     return "root"
+
+def get_ipfs_data(ipfs):
+    ALLOWED_MIME = ["application/json"]
+    TIMEOUT = 30
+
+    try:
+        endpoint = f"https://ipfs.aok.network/ipfs/{ipfs}"
+        content = None
+        parsed = False
+        mime = None
+
+        head = requests.head(endpoint, timeout=TIMEOUT)
+
+        if head.status_code == 200:
+            parsed = True
+
+            if head.headers["Content-Type"] in ALLOWED_MIME:
+                r = requests.get(endpoint, timeout=TIMEOUT)
+
+                mime = head.headers["Content-Type"]
+                content = r.text
+
+        return parsed, content, mime
+
+    except requests.exceptions.ReadTimeout:
+        return False, None, None
+
+@orm.db_session
+def sync_ipfs_cache():
+    log_message("Updating ipfs cache")
+
+    tokens = Token.select(
+        lambda t: t.ipfs is not None
+    )
+
+    for token in tokens:
+        if not IPFSCache.get(ipfs=token.ipfs):
+            IPFSCache(**{
+                "ipfs": token.ipfs
+            })
+
+    orm.commit()
+
+    cache = IPFSCache.select(
+        lambda c: not c.parsed
+    ).order_by(IPFSCache.attempts)
+
+    for entry in cache:
+        log_message(f"Parsing IPFS data for {entry.ipfs}")
+
+        parsed, content, mime = get_ipfs_data(entry.ipfs)
+
+        log_message(f"Parsed: {str(parsed)}")
+
+        entry.content = content
+        entry.parsed = parsed
+        entry.mime = mime
+
+        if not entry.parsed:
+            entry.attempts += 1
+
+        orm.commit()
 
 @orm.db_session
 def sync_tokens():

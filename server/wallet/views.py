@@ -2,6 +2,7 @@
 from webargs.flaskparser import use_args
 from flask import Blueprint
 from pony import orm
+import json
 
 from ..methods.transaction import Transaction as NodeTransaction
 from .args import history_args, addresses_args, unspent_args
@@ -16,6 +17,7 @@ from ..services import BlockService
 from ..services import TokenService
 from ..methods.token import Token
 from ..models import Transaction
+from ..models import IPFSCache
 from .utils import display_tx
 from ..tools import display
 from .. import utils
@@ -244,3 +246,11 @@ def get_tokens(args):
 def get_info():
     """Return chain info"""
     return General.info()
+
+@wallet.route("/ipfs/<string:ipfs>", methods=["GET"])
+@orm.db_session
+def get_ipfs_cached(ipfs):
+    if (entry := IPFSCache.select(lambda c: c.parsed and c.content).first()):
+        return json.loads(entry.content)
+
+    return "Not found", 404
