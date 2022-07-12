@@ -136,3 +136,12 @@ class TokenService(object):
             return 8
 
         return token.units
+
+    @classmethod
+    def get_ipfs(cls, currency):
+        token = Token.get(name=currency)
+
+        if not token or currency == "AOK":
+            return None
+
+        return token.ipfs

@@ -43,6 +43,7 @@ def get_balance(address):
             locked = locked_time + locked_height
             unspent = balance.balance - locked
             units = TokenService.get_units(balance.currency)
+            ipfs = TokenService.get_ipfs(balance.currency)
 
             if balance.balance == 0:
                 continue
@@ -51,7 +52,8 @@ def get_balance(address):
                 "currency": balance.currency,
                 "balance": utils.satoshis(unspent),
                 "locked": utils.satoshis(locked),
-                "units": units
+                "units": units,
+                "ipfs": ipfs
             })
 
     return utils.response(result)
