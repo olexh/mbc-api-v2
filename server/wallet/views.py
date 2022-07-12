@@ -250,7 +250,9 @@ def get_info():
 @wallet.route("/ipfs/<string:ipfs>", methods=["GET"])
 @orm.db_session
 def get_ipfs_cached(ipfs):
-    if (entry := IPFSCache.select(lambda c: c.parsed and c.content).first()):
+    if (entry := IPFSCache.select(
+        lambda c: c.parsed and c.content and c.ipfs == ipfs
+    ).first()):
         return json.loads(entry.content)
 
     return "Not found", 404
