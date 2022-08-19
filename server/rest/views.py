@@ -124,3 +124,25 @@ def plain_supply():
 
     # return Response(str(supply), mimetype="text/plain")
     return Response(str(200_000_000), mimetype="text/plain")
+
+@rest.route("/serg/supply", methods=["GET"])
+def plain_supply():
+    # data = utils.make_request("getblockchaininfo")
+    # height = data["result"]["blocks"]
+    # supply = int(utils.amount(
+    #     utils.supply(height)["supply"]
+    # ))
+
+    # return Response(str(supply), mimetype="text/plain")
+    return Response(str(200_000_000), mimetype="text/plain")
+
+@rest.route("/serg/total", methods=["GET"])
+def plain_supply():
+    # data = utils.make_request("getblockchaininfo")
+    # height = data["result"]["blocks"]
+    # supply = int(utils.amount(
+    #     utils.supply(height)["supply"]
+    # ))
+
+    # return Response(str(supply), mimetype="text/plain")
+    return Response(str(1_000_000_000), mimetype="text/plain")
