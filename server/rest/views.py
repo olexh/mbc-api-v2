@@ -128,14 +128,26 @@ def plain_supply():
 
 @rest.route("/plain/supply/<string:token>", methods=["GET"])
 def plain_supply_token(token):
-    if token == "SERG":
+    if token == "ARTL":
+        return Response(str(250_000_000), mimetype="text/plain")
+    elif token == "CCA":
+        return Response(str(300_000_000), mimetype="text/plain")
+    elif token == "MEC":
+        return Response(str(400_000_000), mimetype="text/plain")
+    elif token == "SERG":
         return Response(str(200_000_000), mimetype="text/plain")
 
     return Response(str(0), mimetype="text/plain")
 
 @rest.route("/plain/total/<string:token>", methods=["GET"])
 def plain_supply_total_token(token):
-    if token == "SERG":
+    if token == "ARTL":
+        return Response(str(1_000_000_000), mimetype="text/plain")
+    elif token == "CCA":
+        return Response(str(1_000_000_000), mimetype="text/plain")
+    elif token == "MEC":
+        return Response(str(600_000_000), mimetype="text/plain")
+    elif token == "SERG":
         return Response(str(1_000_000_000), mimetype="text/plain")
 
     return Response(str(0), mimetype="text/plain")
