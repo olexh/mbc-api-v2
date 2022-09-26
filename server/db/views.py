@@ -273,10 +273,14 @@ def richlist(args, name):
     result = []
 
     for balance in balances:
+        percantage = 0
+        if balance.balance > 0:
+            percantage = round(float((balance.balance / supply) * 100), 4)
+
         result.append({
             "address": balance.address.address,
             "balance": float(balance.balance),
-            "percentage": round(float((balance.balance / supply) * 100), 4)
+            "percentage": percantage
         })
 
     return utils.response(result, pagination=pagination)
@@ -313,10 +317,14 @@ def richlist_full(args, name):
     result = []
 
     for balance in balances:
+        percantage = 0
+        if balance.balance > 0:
+            percantage = round(float((balance.balance / supply) * 100), 4)
+
         result.append({
             "address": balance.address.address,
             "balance": float(balance.balance),
-            "percentage": round(float((balance.balance / supply) * 100), 4)
+            "percentage": percantage
         })
 
     return utils.response(result, pagination=pagination)
