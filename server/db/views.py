@@ -274,7 +274,7 @@ def richlist(args, name):
 
     for balance in balances:
         percantage = 0
-        if balance.balance > 0:
+        if balance.balance > 0 and supply > 0:
             percantage = round(float((balance.balance / supply) * 100), 4)
 
         result.append({
@@ -318,7 +318,7 @@ def richlist_full(args, name):
 
     for balance in balances:
         percantage = 0
-        if balance.balance > 0:
+        if balance.balance > 0 and supply > 0:
             percantage = round(float((balance.balance / supply) * 100), 4)
 
         result.append({
