@@ -491,6 +491,8 @@ def tokens(args):
     if args["search"]:
         tokens = tokens.filter(lambda t: t.name.startswith(args["search"]))
 
+    tokens = token.order_by(lambda t: t.name)
+
     pagination = {
         "total": math.ceil(tokens.count(distinct=False) / args["size"]),
         "page": args["page"]
