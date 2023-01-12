@@ -4,7 +4,7 @@ import math
 import json
 
 def get_logo(name):
-    cache_fix = 4
+    cache_fix = 5
 
     if name == "AOK":
         return f"https://api.aok.network/static/logo/aok.svg?{cache_fix}"
@@ -41,6 +41,9 @@ def get_logo(name):
 
     elif name == "GND":
         return f"https://api.aok.network/static/logo/gnd.svg?{cache_fix}"
+
+    elif name == "CCL":
+        return f"https://api.aok.network/static/logo/ccl.svg?{cache_fix}"
 
     boring_name = name.replace("/", ":")
 

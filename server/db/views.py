@@ -483,7 +483,7 @@ def broadcast(args):
 @use_args(tokens_args, location="query")
 @orm.db_session
 def tokens(args):
-    tokens = Token.select(lambda t: t.category in ["sub", "root"])
+    tokens = Token.select(lambda t: t.category == "root")
 
     # Hide test tokens from tokens list (WIP)
     tokens = tokens.filter(lambda t: not t.name.startswith("TEST"))
