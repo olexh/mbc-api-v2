@@ -3,6 +3,7 @@ import config
 import math
 import json
 
+
 def get_logo(name):
     cache_fix = 5
 
@@ -28,7 +29,9 @@ def get_logo(name):
         return f"https://api.aok.network/static/logo/cca_usdt.svg?{cache_fix}"
 
     elif name == "MEC/HOWLING2":
-        return f"https://api.aok.network/static/logo/mec_howling2.svg?{cache_fix}"
+        return (
+            f"https://api.aok.network/static/logo/mec_howling2.svg?{cache_fix}"
+        )
 
     elif name == "PLB":
         return f"https://api.aok.network/static/logo/plb.svg?{cache_fix}"
@@ -45,12 +48,20 @@ def get_logo(name):
     elif name == "CCL":
         return f"https://api.aok.network/static/logo/ccl.svg?{cache_fix}"
 
+    elif name == "DZTB":
+        return f"https://api.aok.network/static/logo/dztb.png?{cache_fix}"
+
+    elif name == "DHTB":
+        return f"https://api.aok.network/static/logo/dhtb.png?{cache_fix}"
+
     boring_name = name.replace("/", ":")
 
     return f"https://source.boringavatars.com/bauhaus/120/{boring_name}?colors=264653,2a9d8f,e9c46a,f4a261,e76f51"
 
+
 def dead_response(message="Invalid Request", rid=config.rid):
     return {"error": {"code": 404, "message": message}, "id": rid}
+
 
 def response(result, error=None, rid=config.rid, pagination=None):
     result = {"error": error, "id": rid, "result": result}
@@ -59,6 +70,7 @@ def response(result, error=None, rid=config.rid, pagination=None):
         result["pagination"] = pagination
 
     return result
+
 
 def make_request(method, params=[]):
     headers = {"content-type": "text/plain;"}
@@ -69,13 +81,15 @@ def make_request(method, params=[]):
     except Exception:
         return dead_response()
 
+
 def reward(height):
     halvings = height // 525960
 
     if halvings >= 10:
         return 0
 
-    return int(satoshis(4) // (2 ** halvings))
+    return int(satoshis(4) // (2**halvings))
+
 
 def supply(height):
     premine = satoshis(2100000000)
@@ -102,11 +116,13 @@ def supply(height):
         "halvings": int(halvings_count),
         # "supply": int(supply),
         # ToDo: fix supply calculation
-        "supply": satoshis(1_000_000_000)
+        "supply": satoshis(1_000_000_000),
     }
+
 
 def satoshis(value):
     return int(float(value) * math.pow(10, 8))
+
 
 def amount(value, decimals=8):
     return round(float(value) / math.pow(10, decimals), decimals)
