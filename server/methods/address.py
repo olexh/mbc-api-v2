@@ -1,6 +1,7 @@
 from server import utils
 
-class Address():
+
+class Address:
     @classmethod
     def balance(cls, address: str):
         data = utils.make_request("getaddressbalance", [address, True])
@@ -20,13 +21,15 @@ class Address():
                     tokens.append(token)
 
         total = len(tokens)
-        return utils.response({
-            "received": received,
-            "balance": balance,
-            "locked": locked,
-            "tokens": tokens,
-            "total": total
-        })
+        return utils.response(
+            {
+                "received": received,
+                "balance": balance,
+                "locked": locked,
+                "tokens": tokens,
+                "total": total,
+            }
+        )
 
     @classmethod
     def mempool(cls, address: str, raw=False):
@@ -54,18 +57,22 @@ class Address():
 
     @classmethod
     def unspent(cls, address: str, amount: int, token: str):
-        data = utils.make_request("getaddressutxos", [address, utils.amount(amount), token])
+        data = utils.make_request(
+            "getaddressutxos", [address, utils.amount(amount), token]
+        )
 
         if data["error"] is None:
             utxos = []
             for index, utxo in enumerate(data["result"]):
-                utxos.append({
-                    "txid": utxo["txid"],
-                    "index": utxo["outputIndex"],
-                    "script": utxo["script"],
-                    "value": utxo["satoshis"],
-                    "height": utxo["height"]
-                })
+                utxos.append(
+                    {
+                        "txid": utxo["txid"],
+                        "index": utxo["outputIndex"],
+                        "script": utxo["script"],
+                        "value": utxo["satoshis"],
+                        "height": utxo["height"],
+                    }
+                )
 
             data["result"] = utxos
 

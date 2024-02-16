@@ -18,14 +18,19 @@ from .models import IPFSCache
 from .utils import make_request
 from .models import Token
 
+
 def log_block(message, block, tx=[]):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     time = block.created.strftime("%Y-%m-%d %H:%M:%S")
-    print(f"{now} {message}: hash={block.blockhash} height={block.height} tx={len(tx)} date='{time}'")
+    print(
+        f"{now} {message}: hash={block.blockhash} height={block.height} tx={len(tx)} date='{time}'"
+    )
+
 
 def log_message(message):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print(f"{now} {message}")
+
 
 def token_category(name):
     if "#" in name:
@@ -37,6 +42,7 @@ def token_category(name):
     if name[0] == "!":
         return "owner"
     return "root"
+
 
 def get_ipfs_data(ipfs):
     ALLOWED_MIME = ["application/json"]
@@ -64,25 +70,22 @@ def get_ipfs_data(ipfs):
     except requests.exceptions.ReadTimeout:
         return False, None, None
 
+
 @orm.db_session
 def sync_ipfs_cache():
     log_message("Updating ipfs cache")
 
-    tokens = Token.select(
-        lambda t: t.ipfs is not None
-    )
+    tokens = Token.select(lambda t: t.ipfs is not None)
 
     for token in tokens:
         if not IPFSCache.get(ipfs=token.ipfs):
-            IPFSCache(**{
-                "ipfs": token.ipfs
-            })
+            IPFSCache(**{"ipfs": token.ipfs})
 
     orm.commit()
 
-    cache = IPFSCache.select(
-        lambda c: not c.parsed
-    ).order_by(IPFSCache.attempts)
+    cache = IPFSCache.select(lambda c: not c.parsed).order_by(
+        IPFSCache.attempts
+    )
 
     for entry in cache:
         log_message(f"Parsing IPFS data for {entry.ipfs}")
@@ -100,6 +103,7 @@ def sync_ipfs_cache():
 
         orm.commit()
 
+
 @orm.db_session
 def sync_tokens():
     log_message("Updating tokens list")
@@ -114,16 +118,18 @@ def sync_tokens():
 
             if not token:
                 log_message(f"Added {name} to db")
-                token = Token(**{
-                    "amount": data["amount"],
-                    "reissuable": data["reissuable"],
-                    "category": token_category(name),
-                    "height": data["block_height"],
-                    "block": data["blockhash"],
-                    "units": data["units"],
-                    "name": name,
-                    "ipfs": ipfs
-                })
+                token = Token(
+                    **{
+                        "amount": data["amount"],
+                        "reissuable": data["reissuable"],
+                        "category": token_category(name),
+                        "height": data["block_height"],
+                        "block": data["blockhash"],
+                        "units": data["units"],
+                        "name": name,
+                        "ipfs": ipfs,
+                    }
+                )
 
             else:
                 if token.amount != data["amount"]:
@@ -140,6 +146,7 @@ def sync_tokens():
 
                 # ToDo: Update IPFS (?)
 
+
 @orm.db_session
 def sync_blocks():
     if not BlockService.latest_block():
@@ -148,10 +155,20 @@ def sync_blocks():
         signature = data["signature"] if "signature" in data else None
 
         block = BlockService.create(
-            utils.amount(data["reward"]), data["hash"], data["height"], created,
-            data["difficulty"], data["merkleroot"], data["chainwork"],
-            data["version"], data["weight"], data["stake"], data["nonce"],
-            data["size"], data["bits"], signature
+            utils.amount(data["reward"]),
+            data["hash"],
+            data["height"],
+            created,
+            data["difficulty"],
+            data["merkleroot"],
+            data["chainwork"],
+            data["version"],
+            data["weight"],
+            data["stake"],
+            data["nonce"],
+            data["size"],
+            data["bits"],
+            signature,
         )
 
         log_block("Genesis block", block)
@@ -161,7 +178,9 @@ def sync_blocks():
     current_height = General.current_height()
     latest_block = BlockService.latest_block()
 
-    log_message(f"Current node height: {current_height}, db height: {latest_block.height}")
+    log_message(
+        f"Current node height: {current_height}, db height: {latest_block.height}"
+    )
 
     while latest_block.blockhash != Block.blockhash(latest_block.height):
         log_block("Found reorg", latest_block)
@@ -172,16 +191,33 @@ def sync_blocks():
         reorg_block.delete()
         orm.commit()
 
-    for height in range(latest_block.height + 1, current_height + 1):
+    # Quick hack to prevent memory overload
+    next_height = current_height + 1
+    if next_height > latest_block.height + 10000:
+        next_height = latest_block.height + 10000
+
+    for height in range(latest_block.height + 1, next_height):
         block_data = Block.height(height)["result"]
         created = datetime.fromtimestamp(block_data["time"])
-        signature = block_data["signature"] if "signature" in block_data else None
+        signature = (
+            block_data["signature"] if "signature" in block_data else None
+        )
 
         block = BlockService.create(
-            utils.amount(block_data["reward"]), block_data["hash"], block_data["height"], created,
-            block_data["difficulty"], block_data["merkleroot"], block_data["chainwork"],
-            block_data["version"], block_data["weight"], block_data["stake"], block_data["nonce"],
-            block_data["size"], block_data["bits"], signature
+            utils.amount(block_data["reward"]),
+            block_data["hash"],
+            block_data["height"],
+            created,
+            block_data["difficulty"],
+            block_data["merkleroot"],
+            block_data["chainwork"],
+            block_data["version"],
+            block_data["weight"],
+            block_data["stake"],
+            block_data["nonce"],
+            block_data["size"],
+            block_data["bits"],
+            signature,
         )
 
         block.previous_block = latest_block
@@ -199,9 +235,14 @@ def sync_blocks():
             indexes = {}
 
             transaction = TransactionService.create(
-                utils.amount(tx_data["amount"]), tx_data["txid"],
-                created, tx_data["locktime"], tx_data["size"], block,
-                coinbase, coinstake
+                utils.amount(tx_data["amount"]),
+                tx_data["txid"],
+                created,
+                tx_data["locktime"],
+                tx_data["size"],
+                block,
+                coinbase,
+                coinstake,
             )
 
             for vin in tx_data["vin"]:
@@ -212,7 +253,9 @@ def sync_blocks():
                 prev_out = OutputService.get_by_prev(prev_tx, vin["vout"])
 
                 prev_out.address.transactions.add(transaction)
-                balance = BalanceService.get_by_currency(prev_out.address, prev_out.currency)
+                balance = BalanceService.get_by_currency(
+                    prev_out.address, prev_out.currency
+                )
                 balance.balance -= prev_out.amount
 
                 InputService.create(
@@ -244,10 +287,14 @@ def sync_blocks():
                 address.transactions.add(transaction)
 
                 output = OutputService.create(
-                    transaction, amount, vout["scriptPubKey"]["type"],
-                    address, vout["scriptPubKey"]["hex"],
-                    vout["n"], currency,
-                    timelock
+                    transaction,
+                    amount,
+                    vout["scriptPubKey"]["type"],
+                    address,
+                    vout["scriptPubKey"]["hex"],
+                    vout["n"],
+                    currency,
+                    timelock,
                 )
 
                 balance = BalanceService.get_by_currency(address, currency)
@@ -263,15 +310,19 @@ def sync_blocks():
                 indexes[output.currency] += output.amount
 
             for currency in indexes:
-                if TransactionIndex.get(currency=currency, transaction=transaction):
+                if TransactionIndex.get(
+                    currency=currency, transaction=transaction
+                ):
                     continue
 
-                TransactionIndex(**{
-                    "created": transaction.created,
-                    "amount": indexes[currency],
-                    "transaction": transaction,
-                    "currency": currency,
-                })
+                TransactionIndex(
+                    **{
+                        "created": transaction.created,
+                        "amount": indexes[currency],
+                        "transaction": transaction,
+                        "currency": currency,
+                    }
+                )
 
         latest_block = block
         orm.commit()
