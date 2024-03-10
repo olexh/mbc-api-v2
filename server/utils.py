@@ -1,11 +1,9 @@
-import requests
-import config
 import math
 import json
 
 
 def get_logo(name):
-    cache_fix = 5
+    cache_fix = 6
 
     if name == "AOK":
         return f"https://api.aok.network/static/logo/aok.svg?{cache_fix}"
@@ -53,6 +51,9 @@ def get_logo(name):
 
     elif name == "DHTB":
         return f"https://api.aok.network/static/logo/dhtb.png?{cache_fix}"
+
+    elif name == "TONG":
+        return f"https://api.aok.network/static/logo/tong.png?{cache_fix}"
 
     boring_name = name.replace("/", ":")
 
