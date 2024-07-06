@@ -27,7 +27,7 @@ def tx_to_db(data):
             continue
 
         amount = utils.amount(vin["value"])
-        currency = "AOK"
+        currency = "MBC"
 
         if "token" in vin["scriptPubKey"]:
             currency = vin["scriptPubKey"]["token"]["name"]
@@ -41,7 +41,7 @@ def tx_to_db(data):
             "amount": amount
         })
 
-        if currency == "AOK":
+        if currency == "MBC":
             input_amount += amount
 
     for vout in data["result"]["vout"]:
@@ -50,7 +50,7 @@ def tx_to_db(data):
 
         category = vout["scriptPubKey"]["type"]
         amount = utils.amount(vout["value"])
-        currency = "AOK"
+        currency = "MBC"
         timelock = 0
 
         if "token" in vout["scriptPubKey"]:
@@ -72,7 +72,7 @@ def tx_to_db(data):
             "spent": False
         })
 
-        if currency == "AOK":
+        if currency == "MBC":
             output_amount += amount
 
     confirmations = result["confirmations"] if "confirmations" in result else 0
@@ -105,7 +105,7 @@ def tx_to_wallet(data):
             continue
 
         amount = vin["value"]
-        currency = "AOK"
+        currency = "MBC"
 
         if "token" in vin["scriptPubKey"]:
             currency = vin["scriptPubKey"]["token"]["name"]
@@ -121,7 +121,7 @@ def tx_to_wallet(data):
             "units": units
         })
 
-        if currency == "AOK":
+        if currency == "MBC":
             input_amount += amount
 
     for vout in data["result"]["vout"]:
@@ -130,7 +130,7 @@ def tx_to_wallet(data):
 
         category = vout["scriptPubKey"]["type"]
         amount = vout["value"]
-        currency = "AOK"
+        currency = "MBC"
         timelock = 0
 
         if "token" in vout["scriptPubKey"]:
@@ -154,7 +154,7 @@ def tx_to_wallet(data):
             "spent": False
         })
 
-        if currency == "AOK":
+        if currency == "MBC":
             output_amount += amount
 
     confirmations = result["confirmations"] if "confirmations" in result else 0

@@ -27,7 +27,7 @@ def display_tx(db_tx):
             "units": units
         })
 
-        if vin.vout.currency == "AOK":
+        if vin.vout.currency == "MBC":
             input_amount += utils.satoshis(vin.vout.amount)
 
     for vout in db_tx.outputs:
@@ -44,7 +44,7 @@ def display_tx(db_tx):
             "n": vout.n
         })
 
-        if vout.currency == "AOK":
+        if vout.currency == "MBC":
             output_amount += utils.satoshis(vout.amount)
 
     return {

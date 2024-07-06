@@ -7,55 +7,8 @@ import json
 def get_logo(name):
     cache_fix = 6
 
-    if name == "AOK":
-        return f"https://api.aok.network/static/logo/aok.svg?{cache_fix}"
-
-    elif name == "ARTL":
-        return f"https://api.aok.network/static/logo/artl.svg?{cache_fix}"
-
-    elif name == "CCA":
-        return f"https://api.aok.network/static/logo/cca.svg?{cache_fix}"
-
-    elif name == "MEC":
-        return f"https://api.aok.network/static/logo/mec.svg?{cache_fix}"
-
-    elif name == "SERG":
-        return f"https://api.aok.network/static/logo/serg.svg?{cache_fix}"
-
-    elif name == "PAPT":
-        return f"https://api.aok.network/static/logo/papt.svg?{cache_fix}"
-
-    elif name == "CCA/USDT":
-        return f"https://api.aok.network/static/logo/cca_usdt.svg?{cache_fix}"
-
-    elif name == "MEC/HOWLING2":
-        return (
-            f"https://api.aok.network/static/logo/mec_howling2.svg?{cache_fix}"
-        )
-
-    elif name == "PLB":
-        return f"https://api.aok.network/static/logo/plb.svg?{cache_fix}"
-
-    elif name == "NMO":
-        return f"https://api.aok.network/static/logo/nmo.svg?{cache_fix}"
-
-    elif name == "NOL":
-        return f"https://api.aok.network/static/logo/nol.svg?{cache_fix}"
-
-    elif name == "GND":
-        return f"https://api.aok.network/static/logo/gnd.svg?{cache_fix}"
-
-    elif name == "CCL":
-        return f"https://api.aok.network/static/logo/ccl.svg?{cache_fix}"
-
-    elif name == "DZTB":
-        return f"https://api.aok.network/static/logo/dztb.png?{cache_fix}"
-
-    elif name == "DHTB":
-        return f"https://api.aok.network/static/logo/dhtb.png?{cache_fix}"
-
-    elif name == "TONG":
-        return f"https://api.aok.network/static/logo/tong.png?{cache_fix}"
+    if name == "MBC":
+        return f"https://apiv2.mbc.wiki/static/logo/mbc.png?{cache_fix}"
 
     boring_name = name.replace("/", ":")
 

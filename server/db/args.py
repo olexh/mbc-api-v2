@@ -22,5 +22,5 @@ tokens_args = {
 
 chart_args = {
     "resolution": fields.Str(missing="1D", validate=lambda r: r in ["1D", "1M", "1Y"]),
-    "currency": fields.Str(missing="AOK")
+    "currency": fields.Str(missing="MBC")
 }

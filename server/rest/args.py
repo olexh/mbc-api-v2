@@ -16,7 +16,7 @@ range_args = {
 
 unspent_args = {
     "amount": fields.Int(missing=0, validate=validate.Range(min=0)),
-    "token": fields.Str(missing="AOK")
+    "token": fields.Str(missing="MBC")
 }
 
 broadcast_args = {

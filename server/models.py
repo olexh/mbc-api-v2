@@ -120,7 +120,7 @@ class Transaction(db.Entity):
                 "id": vin.id,
             })
 
-            if vin.vout.currency == "AOK":
+            if vin.vout.currency == "MBC":
                 input_amount += vin.vout.amount
 
         inputs = sorted(inputs, key=lambda d: d["id"])
@@ -138,7 +138,7 @@ class Transaction(db.Entity):
                 "index": vout.n
             })
 
-            if vout.currency == "AOK":
+            if vout.currency == "MBC":
                 output_amount += vout.amount
 
         outputs = sorted(outputs, key=lambda d: d["index"])
@@ -200,7 +200,7 @@ class Output(db.Entity):
     _table_ = "chain_outputs"
 
     amount = orm.Required(Decimal, precision=20, scale=8)
-    currency = orm.Required(str, default="AOK", index=True)
+    currency = orm.Required(str, default="MBC", index=True)
     timelock = orm.Required(int, default=0)
     address = orm.Required("Address")
     category = orm.Optional(str)
@@ -227,7 +227,7 @@ class Output(db.Entity):
 class TransactionIndex(db.Entity):
     _table_ = "chain_transaction_index"
 
-    currency = orm.Required(str, default="AOK", index=True)
+    currency = orm.Required(str, default="MBC", index=True)
     amount = orm.Required(Decimal, precision=20, scale=8)
     transaction = orm.Required("Transaction")
     created = orm.Required(datetime)

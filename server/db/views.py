@@ -44,7 +44,7 @@ def info():
 @orm.db_session
 def transactions(args, token):
     if not token:
-        token = "AOK"
+        token = "MBC"
 
     transactions = TransactionIndex.select(
         lambda t: t.currency == token
@@ -231,7 +231,7 @@ def count(address):
     if address:
         transactions = len(address.transactions)
         for balance in address.balances:
-            if balance.currency != "AOK" and balance.balance > 0:
+            if balance.currency != "MBC" and balance.balance > 0:
                 tokens += 1
 
     return utils.response({
@@ -245,7 +245,7 @@ def count(address):
 @orm.db_session
 def richlist(args, name):
     if not name:
-        name = "AOK"
+        name = "MBC"
 
     balances = Balance.select(
         lambda b: b.currency == name and b.balance > 0
@@ -263,7 +263,7 @@ def richlist(args, name):
     block = BlockService.latest_block()
     supply = 0
 
-    if name == "AOK":
+    if name == "MBC":
         supply = Decimal(utils.amount(utils.supply(block.height)["supply"]))
 
     else:
@@ -291,7 +291,7 @@ def richlist(args, name):
 @orm.db_session
 def richlist_full(args, name):
     if not name:
-        name = "AOK"
+        name = "MBC"
 
     balances = Balance.select(
         lambda b: b.currency == name and b.balance > 0
@@ -307,7 +307,7 @@ def richlist_full(args, name):
     block = BlockService.latest_block()
     supply = 0
 
-    if name == "AOK":
+    if name == "MBC":
         supply = Decimal(utils.amount(utils.supply(block.height)["supply"]))
 
     else:
@@ -356,7 +356,7 @@ def balance(address):
             locked = locked_time + locked_height
             unspent = balance.balance - locked
 
-            if balance.balance == 0 and balance.currency != "AOK":
+            if balance.balance == 0 and balance.currency != "MBC":
                 continue
 
             result.append({
@@ -388,10 +388,10 @@ def address(address):
             locked = locked_time + locked_height
             unspent = balance.balance - locked
 
-            if balance.balance == 0 and balance.currency != "AOK":
+            if balance.balance == 0 and balance.currency != "MBC":
                 continue
 
-            if balance.currency != "AOK":
+            if balance.currency != "MBC":
                 result["tokens"] += 1
 
             balances.append({

@@ -61,13 +61,13 @@ class TransactionService(object):
         )
 
     @classmethod
-    def transactions(cls, page=1, pagesize=10, currency="AOK"):
+    def transactions(cls, page=1, pagesize=10, currency="MBC"):
         query = orm.select((o.transaction, sum(o.amount), o.transaction.id) for o in Output if o.currency == currency).distinct()
         query = query.order_by(-3)
         return query
 
     @classmethod
-    def total_transactions(cls, currency="AOK"):
+    def total_transactions(cls, currency="MBC"):
         query = orm.select((orm.count(o.transaction)) for o in Output if o.currency == currency).distinct()
         return query.first()
 
@@ -108,7 +108,7 @@ class OutputService(object):
 
     @classmethod
     def create(cls, transaction, amount, category, address, raw, n,
-               currency="AOK", timelock=0):
+               currency="MBC", timelock=0):
         return Output(
             transaction=transaction, amount=amount, category=category,
             address=address, raw=raw, n=n, currency=currency,
@@ -116,13 +116,13 @@ class OutputService(object):
         )
 
     @classmethod
-    def locked_height(cls, address, height, currency="AOK"):
+    def locked_height(cls, address, height, currency="MBC"):
         return orm.select(
             sum(o.amount) for o in Output if o.spent is False and o.address == address and o.currency == currency and o.timelock <= 500000000 and o.timelock > height
         ).first()
 
     @classmethod
-    def locked_time(cls, address, time, currency="AOK"):
+    def locked_time(cls, address, time, currency="MBC"):
         return orm.select(
             sum(o.amount) for o in Output if o.spent is False and o.address == address and o.currency == currency and o.timelock > 500000000 and o.timelock > time
         ).first()
@@ -132,7 +132,7 @@ class TokenService(object):
     def get_units(cls, currency):
         token = Token.get(name=currency)
 
-        if not token or currency == "AOK":
+        if not token or currency == "MBC":
             return 8
 
         return token.units
@@ -141,7 +141,7 @@ class TokenService(object):
     def get_ipfs(cls, currency):
         token = Token.get(name=currency)
 
-        if not token or currency == "AOK":
+        if not token or currency == "MBC":
             return None
 
         return token.ipfs
