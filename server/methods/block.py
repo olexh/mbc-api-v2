@@ -8,6 +8,8 @@ class Block():
     def height(cls, height: int):
         data = utils.make_request("getblockhash", [height])
 
+        print(data)
+
         if data["error"] is None:
             txid = data["result"]
             data.pop("result")
