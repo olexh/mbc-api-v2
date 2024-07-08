@@ -8,12 +8,13 @@ class Block():
     def height(cls, height: int):
         data = utils.make_request("getblockhash", [height])
 
-        print(data)
-
         if data["error"] is None:
             txid = data["result"]
             data.pop("result")
             data["result"] = utils.make_request("getblock", [txid])["result"]
+
+            print(data["result"])
+
             data["result"]["stake"] = data["result"]["flags"] == "proof-of-stake"
             data["result"]["txcount"] = len(data["result"]["tx"])
             reward = 0
