@@ -17,12 +17,12 @@ class BlockService(object):
     @classmethod
     def create(cls, blockhash, height, created,
                difficulty, merkleroot, chainwork, version,
-               weight, stake, nonce, size, bits,
+               weight, nonce, size, bits,
                signature=None):
         return Block(
             blockhash=blockhash, height=height, created=created,
             difficulty=difficulty, merkleroot=merkleroot, chainwork=chainwork, version=version,
-            weight=weight, stake=stake, nonce=nonce, size=size, bits=bits,
+            weight=weight, nonce=nonce, size=size, bits=bits,
             signature=signature
         )
 
@@ -53,11 +53,11 @@ class TransactionService(object):
 
     @classmethod
     def create(cls, amount, txid, created, size, block,
-               coinbase=False, coinstake=False):
+               coinbase=False):
         return Transaction(
             amount=amount, txid=txid, created=created,
             size=size, coinbase=coinbase,
-            coinstake=coinstake, block=block
+            block=block
         )
 
     @classmethod

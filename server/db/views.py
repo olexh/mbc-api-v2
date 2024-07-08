@@ -65,7 +65,6 @@ def transactions(args, token):
             "blockhash": transaction.block.blockhash,
             "timestamp": int(transaction.block.created.timestamp()),
             "confirmations": transaction.confirmations,
-            "coinstake": transaction.coinstake,
             "coinbase": transaction.coinbase,
             "txhash": transaction.txid,
             "amount": float(index.amount)
@@ -116,7 +115,6 @@ def height(height):
             "chainwork": block.chainwork,
             "version": block.version,
             "weight": block.weight,
-            "stake": block.stake,
             "nonce": block.nonce,
             "size": block.size,
             "bits": block.bits
@@ -141,7 +139,6 @@ def block(bhash):
             "chainwork": block.chainwork,
             "version": block.version,
             "weight": block.weight,
-            "stake": block.stake,
             "nonce": block.nonce,
             "size": block.size,
             "bits": block.bits

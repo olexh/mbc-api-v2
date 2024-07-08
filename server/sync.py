@@ -163,7 +163,6 @@ def sync_blocks():
             data["chainwork"],
             data["version"],
             data["weight"],
-            data["stake"],
             data["nonce"],
             data["size"],
             data["bits"],
@@ -211,7 +210,6 @@ def sync_blocks():
             block_data["chainwork"],
             block_data["version"],
             block_data["weight"],
-            block_data["stake"],
             block_data["nonce"],
             block_data["size"],
             block_data["bits"],
@@ -223,13 +221,12 @@ def sync_blocks():
         log_block("New block", block, block_data["tx"])
 
         for index, txid in enumerate(block_data["tx"]):
-            if block.stake and index == 0:
+            if index == 0:
                 continue
 
             tx_data = Transaction.info(txid, False)["result"]
             created = datetime.fromtimestamp(tx_data["time"])
-            coinbase = block.stake is False and index == 0
-            coinstake = block.stake and index == 1
+            coinbase = index == 0
             indexes = {}
 
             transaction = TransactionService.create(
@@ -239,7 +236,6 @@ def sync_blocks():
                 tx_data["size"],
                 block,
                 coinbase,
-                coinstake,
             )
 
             for vin in tx_data["vin"]:

@@ -56,7 +56,6 @@ class Block(db.Entity):
     chainwork = orm.Required(str)
     version = orm.Required(int)
     weight = orm.Required(int)
-    stake = orm.Required(bool)
     nonce = orm.Required(int)
     size = orm.Required(int)
     bits = orm.Required(str)
@@ -69,7 +68,6 @@ class Transaction(db.Entity):
     _table_ = "chain_transactions"
 
     amount = orm.Required(Decimal, precision=20, scale=8)
-    coinstake = orm.Required(bool, default=False)
     coinbase = orm.Required(bool, default=False)
     txid = orm.Required(str, index=True)
     created = orm.Required(datetime)
@@ -145,7 +143,6 @@ class Transaction(db.Entity):
             "fee": float(input_amount - output_amount),
             "timestamp": int(self.created.timestamp()),
             "amount": float(self.amount),
-            "coinstake": self.coinstake,
             "height": self.block.height,
             "coinbase": self.coinbase,
             "txid": self.txid,

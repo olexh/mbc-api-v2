@@ -51,7 +51,6 @@ def display_tx(db_tx):
         "fee": input_amount - output_amount,
         "timestamp": int(db_tx.created.timestamp()),
         "amount": utils.satoshis(db_tx.amount),
-        "coinstake": db_tx.coinstake,
         "height": db_tx.block.height,
         "coinbase": db_tx.coinbase,
         "txid": db_tx.txid,
