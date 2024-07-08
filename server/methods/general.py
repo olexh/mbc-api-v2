@@ -5,6 +5,8 @@ class General():
     def info(cls):
         data = utils.make_request("getblockchaininfo")
 
+        print(data)
+        
         if data["error"] is None:
             data["result"]["mempool"] = 0
             data["result"]["reward"] = utils.reward(data["result"]["blocks"])
