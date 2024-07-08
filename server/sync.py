@@ -221,13 +221,16 @@ def sync_blocks():
         log_block("New block", block, block_data["tx"])
 
         for index, txid in enumerate(block_data["tx"]):
+
+            print(f"tx hash - {txid}")
+
             tx_data = Transaction.info(txid, False)["result"]
 
             # print(
             #     f"tx: hash={tx_data['txid']} time={tx_data['time']}"
             # )
 
-            print(tx_data)
+            
 
             created = datetime.fromtimestamp(tx_data["time"])
             coinbase = index == 0
