@@ -267,6 +267,7 @@ def sync_blocks():
                     currency = vout["scriptPubKey"]["token"]["name"]
                     amount = vout["scriptPubKey"]["token"]["amount"]
 
+                print(f"scriptPubKey - {vout["scriptPubKey"]}")
    
                 script = vout["scriptPubKey"]["addresses"][0]
                 address = AddressService.get_by_address(script)
