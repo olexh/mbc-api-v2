@@ -226,9 +226,11 @@ def sync_blocks():
 
             tx_data = Transaction.info(txid, False)["result"]
 
-            print(
-                f"tx: hash={tx_data['txid']} time={tx_data['time']}"
-            )
+            # print(
+            #     f"tx: hash={tx_data['txid']} time={tx_data['time']}"
+            # )
+
+            print(tx_data)
 
             created = datetime.fromtimestamp(tx_data["time"])
             coinbase = index == 0
