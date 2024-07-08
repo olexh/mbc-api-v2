@@ -224,7 +224,11 @@ def sync_blocks():
 
             print(f"tx hash - {txid}")
 
-            tx_data = Transaction.info(txid, False)["result"]
+            tx_data = Transaction.info(txid, False)
+
+            print(f"tx data - {tx_data}")
+
+            tx_data = tx_data["result"]
 
             # print(
             #     f"tx: hash={tx_data['txid']} time={tx_data['time']}"
