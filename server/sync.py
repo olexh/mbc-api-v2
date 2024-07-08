@@ -222,19 +222,9 @@ def sync_blocks():
 
         for index, txid in enumerate(block_data["tx"]):
 
-            print(f"tx hash - {txid}")
 
             tx_data = Transaction.info(txid, False)
-
-            print(f"tx data - {tx_data}")
-
-            tx_data = tx_data["result"]
-
-            # print(
-            #     f"tx: hash={tx_data['txid']} time={tx_data['time']}"
-            # )
-
-            
+            tx_data = tx_data["result"]            
 
             created = datetime.fromtimestamp(tx_data["time"])
             coinbase = index == 0
@@ -270,7 +260,7 @@ def sync_blocks():
                 if vout["scriptPubKey"]["type"] in ["nonstandard", "nulldata"]:
                     continue
 
-                amount = utils.amount(vout["valueSat"])
+                amount = utils.amount(vout["value"])
                 currency = "MBC"
 
                 if "token" in vout["scriptPubKey"]:
