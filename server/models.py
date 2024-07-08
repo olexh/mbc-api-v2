@@ -56,7 +56,7 @@ class Block(db.Entity):
     chainwork = orm.Required(str)
     version = orm.Required(int)
     weight = orm.Required(int)
-    nonce = orm.Required(int)
+    nonce = orm.Required(int, size=64)
     size = orm.Required(int)
     bits = orm.Required(str)
 
