@@ -13,31 +13,8 @@ class Block():
             data.pop("result")
             data["result"] = utils.make_request("getblock", [txid])["result"]
 
-            print(data["result"])
-
-            data["result"]["stake"] = data["result"]["flags"] == "proof-of-stake"
             data["result"]["txcount"] = len(data["result"]["tx"])
-            reward = 0
-
-            if data["result"]["height"] != 0:
-                if data["result"]["stake"]:
-                    tx = Transaction.info(data["result"]["tx"][1])
-                    outputs = 0
-                    inputs = 0
-
-                    for vin in tx["result"]["vin"]:
-                        inputs += vin["value"]
-
-                    for vout in tx["result"]["vout"]:
-                        outputs += vout["value"]
-
-                    reward = outputs - inputs
-
-                else:
-                    tx = Transaction.info(data["result"]["tx"][0])
-                    reward = tx["result"]["vout"][0]["value"]
-
-            data["result"]["reward"] = reward
+            data["result"].pop("nTx")
 
         return data
 
@@ -47,28 +24,7 @@ class Block():
 
         if data["error"] is None:
             data["result"]["txcount"] = len(data["result"]["tx"])
-            data["result"]["stake"] = data["result"]["flags"] == "proof-of-stake"
-            reward = 0
-
-            if data["result"]["height"] != 0:
-                if data["result"]["stake"]:
-                    tx = Transaction.info(data["result"]["tx"][1])
-                    outputs = 0
-                    inputs = 0
-
-                    for vin in tx["result"]["vin"]:
-                        inputs += vin["value"]
-
-                    for vout in tx["result"]["vout"]:
-                        outputs += vout["value"]
-
-                    reward = outputs - inputs
-
-                else:
-                    tx = Transaction.info(data["result"]["tx"][0])
-                    reward = tx["result"]["vout"][0]["value"]
-
-            data["result"]["reward"] = reward
+            data["result"].pop("nTx")
 
         return data
 
