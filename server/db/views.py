@@ -345,16 +345,11 @@ def chart():
 @orm.db_session
 def balance(address):
     address = AddressService.get_by_address(address)
-    block = BlockService.latest_block()
     result = []
 
     if address:
         for balance in address.balances:
-            locked_time = OutputService.locked_time(address, block.created.timestamp(), balance.currency)
-            locked_height = OutputService.locked_height(address, block.height, balance.currency)
-
-            locked = locked_time + locked_height
-            unspent = balance.balance - locked
+            unspent = balance.balance
 
             if balance.balance == 0 and balance.currency != "MBC":
                 continue
@@ -362,7 +357,6 @@ def balance(address):
             result.append({
                 "currency": balance.currency,
                 "balance": float(unspent),
-                "locked": float(locked)
             })
 
     return utils.response(result)
@@ -371,7 +365,6 @@ def balance(address):
 @orm.db_session
 def address(address):
     address = AddressService.get_by_address(address)
-    block = BlockService.latest_block()
     balances = []
 
     result = {
@@ -382,11 +375,7 @@ def address(address):
 
     if address:
         for balance in address.balances:
-            locked_time = OutputService.locked_time(address, block.created.timestamp(), balance.currency)
-            locked_height = OutputService.locked_height(address, block.height, balance.currency)
-
-            locked = locked_time + locked_height
-            unspent = balance.balance - locked
+            unspent = balance.balance
 
             if balance.balance == 0 and balance.currency != "MBC":
                 continue
@@ -397,7 +386,6 @@ def address(address):
             balances.append({
                 "currency": balance.currency,
                 "balance": float(unspent),
-                "locked": float(locked)
             })
 
         result["transactions"] = len(address.transactions)

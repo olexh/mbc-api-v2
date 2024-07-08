@@ -51,22 +51,16 @@ def tx_to_db(data):
         category = vout["scriptPubKey"]["type"]
         amount = utils.amount(vout["value"])
         currency = "MBC"
-        timelock = 0
 
         if "token" in vout["scriptPubKey"]:
-            timelock = vout["scriptPubKey"]["token"]["token_lock_time"]
             currency = vout["scriptPubKey"]["token"]["name"]
             amount = vout["scriptPubKey"]["token"]["amount"]
-
-        if "timelock" in vout["scriptPubKey"]:
-            timelock = vout["scriptPubKey"]["timelock"]
 
         address = vout["scriptPubKey"]["addresses"][0]
 
         outputs.append({
             "address": address,
             "currency": currency,
-            "timelock": timelock,
             "amount": amount,
             "category": category,
             "spent": False
@@ -131,15 +125,10 @@ def tx_to_wallet(data):
         category = vout["scriptPubKey"]["type"]
         amount = vout["value"]
         currency = "MBC"
-        timelock = 0
 
         if "token" in vout["scriptPubKey"]:
-            timelock = vout["scriptPubKey"]["token"]["token_lock_time"]
             currency = vout["scriptPubKey"]["token"]["name"]
             amount = utils.satoshis(vout["scriptPubKey"]["token"]["amount"])
-
-        if "timelock" in vout["scriptPubKey"]:
-            timelock = vout["scriptPubKey"]["timelock"]
 
         address = vout["scriptPubKey"]["addresses"][0]
         units = TokenService.get_units(currency)
@@ -147,7 +136,6 @@ def tx_to_wallet(data):
         outputs.append({
             "address": address,
             "currency": currency,
-            "timelock": timelock,
             "amount": amount,
             "category": category,
             "units": units,

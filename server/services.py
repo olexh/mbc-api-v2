@@ -52,11 +52,11 @@ class TransactionService(object):
         return Transaction.get(txid=txid)
 
     @classmethod
-    def create(cls, amount, txid, created, locktime, size, block,
+    def create(cls, amount, txid, created, size, block,
                coinbase=False, coinstake=False):
         return Transaction(
             amount=amount, txid=txid, created=created,
-            locktime=locktime, size=size, coinbase=coinbase,
+            size=size, coinbase=coinbase,
             coinstake=coinstake, block=block
         )
 
@@ -108,24 +108,11 @@ class OutputService(object):
 
     @classmethod
     def create(cls, transaction, amount, category, address, raw, n,
-               currency="MBC", timelock=0):
+               currency="MBC"):
         return Output(
             transaction=transaction, amount=amount, category=category,
             address=address, raw=raw, n=n, currency=currency,
-            timelock=timelock
         )
-
-    @classmethod
-    def locked_height(cls, address, height, currency="MBC"):
-        return orm.select(
-            sum(o.amount) for o in Output if o.spent is False and o.address == address and o.currency == currency and o.timelock <= 500000000 and o.timelock > height
-        ).first()
-
-    @classmethod
-    def locked_time(cls, address, time, currency="MBC"):
-        return orm.select(
-            sum(o.amount) for o in Output if o.spent is False and o.address == address and o.currency == currency and o.timelock > 500000000 and o.timelock > time
-        ).first()
 
 class TokenService(object):
     @classmethod

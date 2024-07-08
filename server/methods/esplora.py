@@ -93,7 +93,6 @@ class Esplora():
         return {
             "txid": result["txid"],
             "version": result["version"],
-            "locktime": result["locktime"],
             "size": result["size"],
             "weight": weight,
             "fee": fee,

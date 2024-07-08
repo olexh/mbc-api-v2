@@ -238,7 +238,6 @@ def sync_blocks():
                 utils.amount(tx_data["amount"]),
                 tx_data["txid"],
                 created,
-                tx_data["locktime"],
                 tx_data["size"],
                 block,
                 coinbase,
@@ -268,16 +267,12 @@ def sync_blocks():
 
                 amount = utils.amount(vout["valueSat"])
                 currency = "MBC"
-                timelock = 0
 
                 if "token" in vout["scriptPubKey"]:
-                    timelock = vout["scriptPubKey"]["token"]["token_lock_time"]
                     currency = vout["scriptPubKey"]["token"]["name"]
                     amount = vout["scriptPubKey"]["token"]["amount"]
 
-                if "timelock" in vout["scriptPubKey"]:
-                    timelock = vout["scriptPubKey"]["timelock"]
-
+   
                 script = vout["scriptPubKey"]["addresses"][0]
                 address = AddressService.get_by_address(script)
 
@@ -294,7 +289,6 @@ def sync_blocks():
                     vout["scriptPubKey"]["hex"],
                     vout["n"],
                     currency,
-                    timelock,
                 )
 
                 balance = BalanceService.get_by_currency(address, currency)

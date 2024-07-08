@@ -29,21 +29,11 @@ wallet = Blueprint("wallet", __name__, url_prefix="/wallet/")
 def get_balance(address):
     """Return balance of address"""
     address = AddressService.get_by_address(address)
-    block = BlockService.latest_block()
     result = []
 
     if address:
         for balance in address.balances:
-            locked_time = OutputService.locked_time(
-                address, block.created.timestamp(), balance.currency
-            )
-
-            locked_height = OutputService.locked_height(
-                address, block.height, balance.currency
-            )
-
-            locked = locked_time + locked_height
-            unspent = balance.balance - locked
+            unspent = balance.balance
             units = TokenService.get_units(balance.currency)
             ipfs = TokenService.get_ipfs(balance.currency)
 
@@ -53,7 +43,6 @@ def get_balance(address):
             result.append({
                 "currency": balance.currency,
                 "balance": utils.satoshis(unspent),
-                "locked": utils.satoshis(locked),
                 "units": units,
                 "ipfs": ipfs
             })
@@ -160,7 +149,6 @@ def get_utxo(args):
             "amount": utils.satoshis(vout.amount),
             "address": vout.address.address,
             "currency": vout.currency,
-            "timelock": vout.timelock,
             "category": vout.category,
             "spent": vout.spent,
             "index": vout.n

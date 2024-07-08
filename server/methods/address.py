@@ -7,7 +7,6 @@ class Address:
         data = utils.make_request("getaddressbalance", [address, True])
         received = 0
         balance = 0
-        locked = 0
 
         tokens = []
 
@@ -16,7 +15,6 @@ class Address:
                 if token["tokenName"] == "MBC":
                     received = token["received"]
                     balance = token["balance"]
-                    locked = token["locked"]
                 else:
                     tokens.append(token)
 
@@ -25,7 +23,6 @@ class Address:
             {
                 "received": received,
                 "balance": balance,
-                "locked": locked,
                 "tokens": tokens,
                 "total": total,
             }

@@ -36,7 +36,6 @@ def display_tx(db_tx):
         outputs.append({
             "address": vout.address.address,
             "currency": vout.currency,
-            "timelock": vout.timelock,
             "category": vout.category,
             "amount": utils.satoshis(vout.amount),
             "units": units,

@@ -74,7 +74,6 @@ class Transaction(db.Entity):
     coinbase = orm.Required(bool, default=False)
     txid = orm.Required(str, index=True)
     created = orm.Required(datetime)
-    locktime = orm.Required(int)
     size = orm.Required(int)
 
     block = orm.Required("Block")
@@ -131,7 +130,6 @@ class Transaction(db.Entity):
                 "vin": vout.vin.transaction.txid if vout.vin else None,
                 "address": vout.address.address,
                 "currency": vout.currency,
-                "timelock": vout.timelock,
                 "amount": float(vout.amount),
                 "category": vout.category,
                 "spent": vout.spent,
@@ -201,7 +199,6 @@ class Output(db.Entity):
 
     amount = orm.Required(Decimal, precision=20, scale=8)
     currency = orm.Required(str, default="MBC", index=True)
-    timelock = orm.Required(int, default=0)
     address = orm.Required("Address")
     category = orm.Optional(str)
     raw = orm.Optional(str)
