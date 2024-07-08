@@ -35,7 +35,6 @@ def info():
         "height": block.height,
         "chainwork": block.chainwork,
         "difficulty": block.difficulty,
-        "reward": float(block.reward)
     })
 
 @db.route("/transactions", defaults={"token": None}, methods=["GET"])
@@ -94,7 +93,6 @@ def blocks(args):
             "height": block.height,
             "blockhash": block.blockhash,
             "timestamp": int(block.created.timestamp()),
-            "reward": float(block.reward),
             "tx": len(block.transactions),
             "size": block.size
         })
@@ -108,7 +106,6 @@ def height(height):
 
     if block:
         return utils.response({
-            "reward": float(block.reward),
             "signature": block.signature,
             "blockhash": block.blockhash,
             "height": block.height,
@@ -134,7 +131,6 @@ def block(bhash):
 
     if block:
         return utils.response({
-            "reward": float(block.reward),
             "signature": block.signature,
             "blockhash": block.blockhash,
             "height": block.height,

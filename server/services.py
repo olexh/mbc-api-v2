@@ -15,12 +15,12 @@ class BlockService(object):
         ).first()
 
     @classmethod
-    def create(cls, reward, blockhash, height, created,
+    def create(cls, blockhash, height, created,
                difficulty, merkleroot, chainwork, version,
                weight, stake, nonce, size, bits,
                signature=None):
         return Block(
-            reward=reward, blockhash=blockhash, height=height, created=created,
+            blockhash=blockhash, height=height, created=created,
             difficulty=difficulty, merkleroot=merkleroot, chainwork=chainwork, version=version,
             weight=weight, stake=stake, nonce=nonce, size=size, bits=bits,
             signature=signature

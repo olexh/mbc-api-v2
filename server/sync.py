@@ -155,7 +155,6 @@ def sync_blocks():
         signature = data["signature"] if "signature" in data else None
 
         block = BlockService.create(
-            utils.amount(data["reward"]),
             data["hash"],
             data["height"],
             created,
@@ -204,7 +203,6 @@ def sync_blocks():
         )
 
         block = BlockService.create(
-            utils.amount(block_data["reward"]),
             block_data["hash"],
             block_data["height"],
             created,

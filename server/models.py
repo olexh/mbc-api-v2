@@ -47,7 +47,6 @@ class Token(db.Entity):
 class Block(db.Entity):
     _table_ = "chain_blocks"
 
-    reward = orm.Required(Decimal, precision=20, scale=8)
     signature = orm.Optional(str, nullable=True)
     blockhash = orm.Required(str, index=True)
     height = orm.Required(int, index=True)
