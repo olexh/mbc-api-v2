@@ -221,9 +221,6 @@ def sync_blocks():
         log_block("New block", block, block_data["tx"])
 
         for index, txid in enumerate(block_data["tx"]):
-            if index == 0:
-                continue
-
             tx_data = Transaction.info(txid, False)["result"]
 
             # print(
