@@ -4,8 +4,6 @@ class General():
     @classmethod
     def info(cls):
         data = utils.make_request("getblockchaininfo")
-
-        print(data)
         
         if data["error"] is None:
             data["result"]["mempool"] = 0
@@ -13,7 +11,6 @@ class General():
             data["result"].pop("verificationprogress")
             data["result"].pop("pruned")
             data["result"].pop("softforks")
-            data["result"].pop("bip9_softforks")
             data["result"].pop("warnings")
             data["result"].pop("size_on_disk")
 
