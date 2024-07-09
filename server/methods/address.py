@@ -55,7 +55,7 @@ class Address:
     @classmethod
     def unspent(cls, address: str, amount: int, token: str):
         data = utils.make_request(
-            "getaddressutxos", [address, utils.amount(amount), token]
+            "getaddressutxos", [address, utils.amount(amount)]
         )
 
         if data["error"] is None:
