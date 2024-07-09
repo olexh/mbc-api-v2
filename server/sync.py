@@ -223,11 +223,10 @@ def sync_blocks():
         for index, txid in enumerate(block_data["tx"]):
 
 
-            tx_data = Transaction.info(txid, False)
-            tx_data = tx_data["result"]            
+            tx_data = Transaction.info(txid, False)["result"]        
 
             created = datetime.fromtimestamp(tx_data["time"])
-            coinbase = index == 0
+            coinbase = False
             indexes = {}
 
             transaction = TransactionService.create(
@@ -243,7 +242,9 @@ def sync_blocks():
                 if "coinbase" in vin:
                     continue
 
+                print(f"vin txid - {vin["txid"]}")
                 prev_tx = TransactionService.get_by_txid(vin["txid"])
+                print(f"prev_tx - {prev_tx}")
                 prev_out = OutputService.get_by_prev(prev_tx, vin["vout"])
 
                 prev_out.address.transactions.add(transaction)
