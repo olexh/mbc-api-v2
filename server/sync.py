@@ -242,7 +242,7 @@ def sync_blocks():
                 if "coinbase" in vin:
                     continue
 
-                print(f"vin txid - {vin["txid"]}")
+                print(f"vin txid - {vin['txid']}")
                 prev_tx = TransactionService.get_by_txid(vin["txid"])
                 print(f"prev_tx - {prev_tx}")
                 prev_out = OutputService.get_by_prev(prev_tx, vin["vout"])
