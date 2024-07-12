@@ -16,7 +16,7 @@ db = orm.Database(**config.db_params)
 class Token(db.Entity):
     _table_ = "chain_tokens"
 
-    amount = orm.Required(Decimal, precision=20, scale=8)
+    amount = orm.Required(Decimal, precision=20, scale=4)
     ipfs = orm.Optional(str, nullable=True)
     name = orm.Required(str, index=True)
     reissuable = orm.Required(bool)
@@ -67,7 +67,7 @@ class Block(db.Entity):
 class Transaction(db.Entity):
     _table_ = "chain_transactions"
 
-    amount = orm.Required(Decimal, precision=20, scale=8)
+    amount = orm.Required(Decimal, precision=20, scale=4)
     coinbase = orm.Required(bool, default=False)
     txid = orm.Required(str, index=True)
     created = orm.Required(datetime)
@@ -168,7 +168,7 @@ class Address(db.Entity):
 class Balance(db.Entity):
     _table_ = "chain_address_balance"
 
-    balance = orm.Required(Decimal, precision=20, scale=8, default=0)
+    balance = orm.Required(Decimal, precision=20, scale=4, default=0)
     address = orm.Required("Address")
     currency = orm.Required(str)
 
@@ -193,7 +193,7 @@ class Input(db.Entity):
 class Output(db.Entity):
     _table_ = "chain_outputs"
 
-    amount = orm.Required(Decimal, precision=20, scale=8)
+    amount = orm.Required(Decimal, precision=20, scale=4)
     currency = orm.Required(str, default="MBC", index=True)
     address = orm.Required("Address")
     category = orm.Optional(str)
@@ -221,7 +221,7 @@ class TransactionIndex(db.Entity):
     _table_ = "chain_transaction_index"
 
     currency = orm.Required(str, default="MBC", index=True)
-    amount = orm.Required(Decimal, precision=20, scale=8)
+    amount = orm.Required(Decimal, precision=20, scale=4)
     transaction = orm.Required("Transaction")
     created = orm.Required(datetime)
 

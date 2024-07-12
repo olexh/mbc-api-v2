@@ -120,7 +120,7 @@ class TokenService(object):
         token = Token.get(name=currency)
 
         if not token or currency == "MBC":
-            return 8
+            return 4
 
         return token.units
 
