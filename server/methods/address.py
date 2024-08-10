@@ -4,7 +4,7 @@ from server import utils
 class Address:
     @classmethod
     def balance(cls, address: str):
-        data = utils.make_request("getaddressbalance", [address, True])
+        data = utils.make_request("getaddressbalance", [{ "addresses": [address] }])
         received = 0
         balance = 0
 
