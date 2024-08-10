@@ -5,19 +5,13 @@ class Address:
     @classmethod
     def balance(cls, address: str):
         data = utils.make_request("getaddressbalance", [{ "addresses": [address] }])
-        received = 0
-        balance = 0
 
-        if data["error"] is None:
-            """ for token in data["result"]:
-                if token["tokenName"] == "MBC":
-                    received = token["received"]
-                    balance = token["balance"]
-                else:
-                    tokens.append(token)
-
-        total = len(tokens) """
-        return utils.response(data)
+        return utils.response(
+            {
+                "received": utils.satoshis(data["result"]["received"] or 0),
+                "balance": utils.satoshis(data["result"]["balance"] or 0),
+            }
+        )
 
     @classmethod
     def mempool(cls, address: str, raw=False):
