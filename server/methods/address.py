@@ -8,8 +8,8 @@ class Address:
 
         return utils.response(
             {
-                "received": utils.satoshis(data["result"]["received"] or 0),
-                "balance": utils.satoshis(data["result"]["balance"] or 0),
+                "received": utils.amount(data["result"]["received"]),
+                "balance": utils.amount(data["result"]["balance"]),
             }
         )
 
