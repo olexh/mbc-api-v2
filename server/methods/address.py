@@ -8,8 +8,8 @@ class Address:
 
         return utils.response(
             {
-                "received": utils.amount(data["result"]["received"]),
-                "balance": utils.amount(data["result"]["balance"]),
+                "received": data["result"]["received"],
+                "balance": data["result"]["balance"],
             }
         )
 
