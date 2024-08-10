@@ -8,6 +8,9 @@ class Address:
         received = 0
         balance = 0
 
+        print('ADDRESS BALANCE')
+        print(data)
+
         tokens = []
 
         if data["error"] is None:
