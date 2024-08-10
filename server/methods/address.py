@@ -8,28 +8,16 @@ class Address:
         received = 0
         balance = 0
 
-        print('ADDRESS BALANCE')
-        print(data)
-
-        tokens = []
-
         if data["error"] is None:
-            for token in data["result"]:
+            """ for token in data["result"]:
                 if token["tokenName"] == "MBC":
                     received = token["received"]
                     balance = token["balance"]
                 else:
                     tokens.append(token)
 
-        total = len(tokens)
-        return utils.response(
-            {
-                "received": received,
-                "balance": balance,
-                "tokens": tokens,
-                "total": total,
-            }
-        )
+        total = len(tokens) """
+        return utils.response(data)
 
     @classmethod
     def mempool(cls, address: str, raw=False):
